@@ -14,19 +14,18 @@ import type {
 } from "@prisma/client";
 import type { CreateOTP, CreateUser, UpdateUser } from "./types";
 
-
 export interface IUser {
 	getAll: () => Promise<User[]>;
 	getOne: (id: string) => Promise<User | null>;
 	create: (data: CreateUser) => Promise<User | null>;
-	update: (id: string, data: UpdateUser ) => Promise<User>;
+	update: (id: string, data: UpdateUser) => Promise<User>;
 	delete: (id: string) => Promise<void>;
 }
 
 export interface IOTP {
-    getAll: () => Promise<OTP[]>;
-    getOne: (id: string) => Promise<OTP | null>;
-    create: (data: CreateOTP) => Promise<OTP>;
+	getAll: () => Promise<OTP[]>;
+	getOne: (id: string) => Promise<OTP | null>;
+	create: (data: CreateOTP) => Promise<OTP>;
 }
 
 export interface IEmployee {
