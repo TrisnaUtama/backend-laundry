@@ -43,9 +43,8 @@ model User {
   phone_number  String
   password      String
   is_verified   Boolean        @default(false)
-  loyalty_points Int           @default(0)
   created_at    DateTime       @default(now())
-  updated_at    DateTime       @updatedAt
+  updated_at    DateTime?       @updatedAt
   orders        Order[]
   otp           OTP[]
   rattings       Ratting[]
