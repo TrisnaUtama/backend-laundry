@@ -12,7 +12,7 @@ import type {
 	Order,
 	Payment,
 } from "@prisma/client";
-import type { CreateOTP, CreateUser, UpdateUser } from "./types";
+import type { CreateOTP, CreateUser, UpdateOTP, UpdateUser } from "./types";
 
 export interface IUser {
 	getAll: () => Promise<User[]>;
@@ -24,8 +24,9 @@ export interface IUser {
 
 export interface IOTP {
 	getAll: () => Promise<OTP[]>;
-	getOne: (id: string) => Promise<OTP | null>;
+	getOne: (id: string, code : string) => Promise<OTP | null>;
 	create: (data: CreateOTP) => Promise<OTP>;
+	update: (id:string, data: Partial<UpdateOTP>) => Promise<OTP>;
 }
 
 export interface IEmployee {

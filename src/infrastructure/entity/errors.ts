@@ -16,6 +16,6 @@ export class AuthorizationError extends Error {
 	constructor(message: string) {
 		super(message);
 		this.status = 404;
-		this.code = "Authorization Error";
+		this.code = "Unauthorized";
 	}
 }

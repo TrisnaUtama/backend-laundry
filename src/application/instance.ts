@@ -6,12 +6,12 @@ import { AuthServices } from "./services/auth.services";
 
 const container = new Container();
 
-// Bind repositories to TYPES
+// bind repositories to TYPES
 container.bind<UserRepository>(TYPES.userRepo).to(UserRepository);
 container.bind<OTPRepository>(TYPES.otpRepo).to(OTPRepository);
 
-// Bind AuthServices
+// bind services
 container.bind<AuthServices>(AuthServices).toSelf();
 
-// Resolve AuthServices instance
+// instances
 export const authServices = container.get<AuthServices>(AuthServices);
