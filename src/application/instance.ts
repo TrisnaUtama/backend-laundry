@@ -28,4 +28,4 @@ export const authServices = container.get<AuthServices>(AuthServices);
 export const addressServices = container.get<AddressServices>(AddressServices);
 export const userServices = container.get<UserServices>(UserServices);
 export const employeeServices =
-  container.get<EmployeeServices>(EmployeeServices);
+	container.get<EmployeeServices>(EmployeeServices);
