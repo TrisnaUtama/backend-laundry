@@ -1,2 +1,0 @@
-bun run lint:format
-bun run lint:check

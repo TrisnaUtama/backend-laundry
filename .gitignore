@@ -34,7 +34,14 @@ yarn-error.log*
 # vercel
 .vercel
 
-.http
+# Ignore .http files
+*.http
+
+# Ignore .husky folder
+.husky/
+
+# Ignore .vscode folder
+.vscode/
 
 **/*.trace
 **/*.zip
