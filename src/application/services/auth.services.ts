@@ -1,15 +1,14 @@
-import type { OTP, User } from "@prisma/client";
+import { Role, type OTP, type User } from "@prisma/client";
 import type { UserRepository } from "../../infrastructure/db/user.repo";
 import type { OTPRepository } from "../../infrastructure/db/otp.repo";
+import type { CreateUser, UpdateUser } from "../../infrastructure/entity/types";
 import "reflect-metadata";
 import { injectable, inject } from "inversify";
 import { TYPES } from "../../infrastructure/entity/types";
 import { notifyEmail } from "../../infrastructure/utils/email";
-import {
-  ACCESS_TOKEN_EXP,
-  REFRESH_TOKEN_EXP,
-} from "../../infrastructure/constant/constant";
+import { ACCESS_TOKEN_EXP, REFRESH_TOKEN_EXP } from "../../constant/constant";
 import { signJwt } from "../../infrastructure/utils/jwtSign";
+import { password } from "bun";
 
 @injectable()
 export class AuthServices {
@@ -24,17 +23,7 @@ export class AuthServices {
     this.otpRepo = otpRepo;
   }
 
-  async registerUser(
-    data: Omit<
-      User,
-      | "user_id"
-      | "is_verified"
-      | "created_at"
-      | "updated_at"
-      | "refresh_token"
-      | "isOnline"
-    >
-  ) {
+  async registerUser(data: CreateUser) {
     try {
       const exsisting_user = await this.userRepo.getOne(data.email);
 
@@ -45,9 +34,11 @@ export class AuthServices {
         ...data,
         password: hashed_password,
         is_verified: false,
+        role: Role.User,
       };
+
       const create_user = await this.userRepo.create(newData);
-      this.sendOtp(create_user.user_id, create_user.email);
+      await this.sendOtp(create_user.user_id, create_user.email);
       return create_user;
     } catch (error) {
       if (error instanceof Error) {
@@ -128,7 +119,7 @@ export class AuthServices {
 
       const payload = {
         user_id: get_user.user_id,
-        email: get_user.email,
+        role: get_user.role,
       };
 
       const accessToken = signJwt(payload, ACCESS_TOKEN_EXP);
@@ -141,7 +132,7 @@ export class AuthServices {
 
       const sanitizedUser = {
         user_id: updated_user.user_id,
-        email: updated_user.email,
+        role: updated_user.role,
         name: updated_user.name,
         isOnline: updated_user.isOnline,
       };
@@ -156,6 +147,29 @@ export class AuthServices {
     } catch (error) {
       if (error instanceof Error) {
         console.log("data");
+        throw new Error(error.message);
+      }
+      throw new Error("something went wrong while accessing register service");
+    }
+  }
+
+  async decodeUser(user_id: string) {
+    try {
+      const user = await this.userRepo.getOne(user_id);
+      return user;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+      throw new Error("something went wrong while accessing register service");
+    }
+  }
+
+  async logout(user_id: string, data: UpdateUser) {
+    try {
+      await this.userRepo.update(user_id, data);
+    } catch (error) {
+      if (error instanceof Error) {
         throw new Error(error.message);
       }
       throw new Error("something went wrong while accessing register service");

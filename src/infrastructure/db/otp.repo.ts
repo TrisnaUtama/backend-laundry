@@ -39,6 +39,7 @@ export class OTPRepository implements IOTP {
       const new_otp = await prisma.oTP.create({
         data,
       });
+
       return new_otp;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {

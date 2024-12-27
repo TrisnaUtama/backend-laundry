@@ -1,10 +1,10 @@
 import { Prisma } from "@prisma/client";
-import type { IUser } from "../entity/interface";
-import type { CreateUser, UpdateUser } from "../entity/types";
+import type { IEmployee } from "../entity/interface";
+import type { CreateEmployee, UpdateUser } from "../entity/types";
 import { prisma } from "../utils/prisma";
 import { DBError } from "../entity/errors";
 
-export class UserRepository implements IUser {
+export class UserRepository implements IEmployee {
   async getAll() {
     try {
       const users = await prisma.user.findMany();
@@ -13,7 +13,7 @@ export class UserRepository implements IUser {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         throw new DBError(error.message);
       }
-      throw new DBError("something went wrong while accesing DB Repo");
+      throw new DBError("something went wrong while accesing DB user");
     }
   }
 
@@ -24,18 +24,19 @@ export class UserRepository implements IUser {
           OR: [{ user_id: idOrEmail }, { email: idOrEmail }],
         },
       });
+
       return user;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         throw new DBError(error.message);
       }
       throw new DBError(
-        "something went wrong while getting specific user in DB Repo"
+        "something went wrong while getting specific user in DB user"
       );
     }
   }
 
-  async create(data: CreateUser) {
+  async create(data: CreateEmployee) {
     try {
       const user = await prisma.user.create({
         data,
@@ -45,7 +46,7 @@ export class UserRepository implements IUser {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         throw new DBError(error.message);
       }
-      throw new DBError("something went wrong while accesing DB Repo");
+      throw new DBError("something went wrong while accesing DB user");
     }
   }
 
@@ -70,7 +71,7 @@ export class UserRepository implements IUser {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         throw new DBError(error.message);
       }
-      throw new DBError("something went wrong while accesing DB Repo");
+      throw new DBError("something went wrong while accesing DB user");
     }
   }
 
@@ -85,7 +86,7 @@ export class UserRepository implements IUser {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         throw new DBError(error.message);
       }
-      throw new DBError("something went wrong while accesing DB Repo");
+      throw new DBError("something went wrong while accesing DB user");
     }
   }
 }

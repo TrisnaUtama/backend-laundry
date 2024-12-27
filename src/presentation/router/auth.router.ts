@@ -1,16 +1,35 @@
 import { Elysia, t } from "elysia";
-import { authServices } from "../../application/instance";
+import type { IJwtPayload } from "../../infrastructure/entity/interface";
 import {
-  ACCESS_TOKEN_EXP,
-  REFRESH_TOKEN_EXP,
-} from "../../infrastructure/constant/constant";
+  addressServices,
+  authServices,
+  userServices,
+} from "../../application/instance";
+import { ACCESS_TOKEN_EXP, REFRESH_TOKEN_EXP } from "../../constant/constant";
+import { AuthorizationError } from "../../infrastructure/entity/errors";
+import { signJwt, verifyJwt } from "../../infrastructure/utils/jwtSign";
+import { Role } from "@prisma/client";
 
 export const authRouter = new Elysia({ prefix: "/v1" })
   .post(
     "/register",
     async ({ body, set }) => {
       try {
-        const newUser = await authServices.registerUser(body);
+        const user_data = {
+          name: body.name,
+          email: body.email,
+          password: body.password,
+          phone_number: body.phone_number,
+        };
+
+        const newUser = await authServices.registerUser(user_data);
+
+        const address_data = {
+          address: body.address,
+          user_id: newUser.user_id,
+        };
+        await addressServices.create(address_data);
+
         set.status = 201;
         return newUser;
       } catch (error) {
@@ -18,7 +37,7 @@ export const authRouter = new Elysia({ prefix: "/v1" })
         if (error instanceof Error) {
           throw new Error(error.message);
         }
-        throw new Error("something went wrong in route register");
+        throw new Error("something wrong when accessing route register");
       }
     },
     {
@@ -27,6 +46,7 @@ export const authRouter = new Elysia({ prefix: "/v1" })
         email: t.String(),
         password: t.String(),
         phone_number: t.String(),
+        address: t.String(),
       }),
     }
   )
@@ -49,7 +69,7 @@ export const authRouter = new Elysia({ prefix: "/v1" })
         if (error instanceof Error) {
           throw new Error(error.message);
         }
-        throw new Error("something went wrong in route register");
+        throw new Error("something wrong when accessing route register");
       }
     },
     {
@@ -71,7 +91,7 @@ export const authRouter = new Elysia({ prefix: "/v1" })
         if (error instanceof Error) {
           throw new Error(error.message);
         }
-        throw new Error("something went wrong in route register");
+        throw new Error("something wrong when accessing route register");
       }
     },
     {
@@ -116,11 +136,12 @@ export const authRouter = new Elysia({ prefix: "/v1" })
           },
         };
       } catch (error) {
+        set.status = 500;
         if (error instanceof Error) {
           console.log(error.message);
           throw new Error(error.message);
         }
-        throw new Error("something went wrong in route register");
+        throw new Error("something wrong when accessing route register");
       }
     },
     {
@@ -128,5 +149,67 @@ export const authRouter = new Elysia({ prefix: "/v1" })
         email: t.String(),
         password: t.String(),
       }),
+    }
+  )
+  .post(
+    "/refresh",
+    async ({ set, cookie: { access_token, refresh_token } }) => {
+      try {
+        if (!refresh_token.value) {
+          set.status = 401;
+          throw new AuthorizationError("Unauthorized");
+        }
+
+        const jwtPayload: IJwtPayload = verifyJwt(
+          refresh_token.value.toString()
+        );
+        if (!jwtPayload) {
+          set.status = 403;
+          throw new AuthorizationError("Forbidden");
+        }
+
+        const user_id = jwtPayload.user_id;
+        if (!user_id) throw new AuthorizationError("invalid payload !");
+
+        const user = await userServices.getOne(user_id);
+        if (!user) {
+          set.status = 403;
+          throw new AuthorizationError("Forbidden");
+        }
+
+        const payload = {
+          user_id: user.user_id,
+          role: user.role,
+        };
+        const accessToken = signJwt(payload, ACCESS_TOKEN_EXP);
+        const refreshToken = signJwt(payload, REFRESH_TOKEN_EXP);
+
+        access_token.set({
+          value: accessToken,
+          httpOnly: true,
+          maxAge: ACCESS_TOKEN_EXP,
+          path: "/",
+        });
+
+        refresh_token.set({
+          value: refreshToken,
+          httpOnly: true,
+          maxAge: REFRESH_TOKEN_EXP,
+          path: "/",
+        });
+
+        const refresh_data = {
+          isOnline: true,
+          refresh_token: refreshToken,
+        };
+        await userServices.update(user.user_id, refresh_data);
+      } catch (error) {
+        set.status = 500;
+        if (error instanceof Error) {
+          console.log(error.message);
+          throw new Error(error.message);
+        }
+        throw new Error("something wrong when accessing route register");
+      }
     }
   );

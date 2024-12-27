@@ -7,11 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  Admin
-  Staff
-}
-
 enum Order_Status {
   received
   canceled
@@ -36,21 +31,49 @@ enum Payment_Method {
   e_wallet
 }
 
+enum Role {
+  Admin
+  Staff
+  User
+}
+
 model User {
   user_id       String         @id @default(cuid())
   name          String
   email         String         @unique
   phone_number  String
   password      String
-  is_verified   Boolean        @default(false)
+  is_verified   Boolean?  
+  status        Boolean  @default(true)      
+  role          Role
   created_at    DateTime       @default(now())
-  updated_at    DateTime?       @updatedAt
+  updated_at    DateTime?       
   refresh_token String?
   isOnline      Boolean @default(false)
   orders        Order[]
   otp           OTP[]
-  rattings       Ratting[]
+  rattings      Ratting[]
   addresses     Address[]
+}
+model Employee {
+  employee_id String   @id @default(cuid())
+  name        String
+  status      Boolean  @default(true)
+  email       String   @unique
+  refresh_token String?
+  role        Role
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+model Address {
+  user_address_id String    @id @default(cuid())
+  user_id         String
+  address         String
+  is_default      Boolean   @default(false)
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+  user            User      @relation(fields: [user_id], references: [user_id])
+  orders          Order[]
 }
 
 model OTP {
@@ -71,28 +94,6 @@ model Ratting {
   created_at DateTime @default(now())
   user       User     @relation(fields: [user_id], references: [user_id])
   order      Order    @relation(fields: [order_id], references: [order_id])
-}
-
-model Address {
-  user_address_id String    @id @default(cuid())
-  user_id         String
-  address         String
-  is_default      Boolean   @default(false)
-  created_at      DateTime  @default(now())
-  updated_at      DateTime  @updatedAt
-  user            User      @relation(fields: [user_id], references: [user_id])
-  orders          Order[]
-}
-
-model Employee {
-  employee_id String   @id @default(cuid())
-  name        String
-  status      Boolean  @default(true)
-  email       String   @unique
-  refresh_token String?
-  role        Role
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
 }
 
 model Service {
