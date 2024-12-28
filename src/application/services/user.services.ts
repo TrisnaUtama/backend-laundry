@@ -1,6 +1,5 @@
 import { TYPES } from "../../infrastructure/entity/types";
 import type {
-	CreateEmployee,
 	UpdateUser,
 } from "../../infrastructure/entity/types";
 import "reflect-metadata";

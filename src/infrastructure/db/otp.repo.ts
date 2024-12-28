@@ -5,64 +5,64 @@ import { Prisma } from "@prisma/client";
 import { DBError } from "../entity/errors";
 
 export class OTPRepository implements IOTP {
-	async getAll() {
-		try {
-			const otp = await prisma.oTP.findMany();
-			return otp;
-		} catch (error) {
-			if (error instanceof Prisma.PrismaClientKnownRequestError) {
-				throw new DBError(error.message);
-			}
-			throw new DBError("something went wrong while accesing  OTP");
-		}
-	}
+  async getAll() {
+    try {
+      const otp = await prisma.oTP.findMany();
+      return otp;
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        throw new DBError(error.message);
+      }
+      throw new DBError("something went wrong while accesing  OTP");
+    }
+  }
 
-	async getOne(user_id: string) {
-		try {
-			const otp = await prisma.oTP.findFirst({
-				where: {
-					user_id: user_id,
-				},
-			});
+  async getOne(user_id: string) {
+    try {
+      const otp = await prisma.oTP.findFirst({
+        where: {
+          user_id: user_id,
+        },
+      });
 
-			return otp;
-		} catch (error) {
-			if (error instanceof Prisma.PrismaClientKnownRequestError) {
-				throw new DBError(error.message);
-			}
-			throw new DBError("something went wrong while accesing DB OTP");
-		}
-	}
+      return otp;
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        throw new DBError(error.message);
+      }
+      throw new DBError("something went wrong while accesing DB OTP");
+    }
+  }
 
-	async create(data: CreateOTP) {
-		try {
-			const new_otp = await prisma.oTP.create({
-				data,
-			});
+  async create(data: CreateOTP) {
+    try {
+      const new_otp = await prisma.oTP.create({
+        data,
+      });
 
-			return new_otp;
-		} catch (error) {
-			if (error instanceof Prisma.PrismaClientKnownRequestError) {
-				throw new DBError(error.message);
-			}
-			throw new DBError("something went wrong while accesing DB otp create");
-		}
-	}
+      return new_otp;
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        throw new DBError(error.message);
+      }
+      throw new DBError("something went wrong while accesing DB OTP ");
+    }
+  }
 
-	async update(id: string, data: UpdateOTP) {
-		try {
-			const new_otp = await prisma.oTP.update({
-				where: {
-					otp_id: id,
-				},
-				data,
-			});
-			return new_otp;
-		} catch (error) {
-			if (error instanceof Prisma.PrismaClientKnownRequestError) {
-				throw new DBError(error.message);
-			}
-			throw new DBError("something went wrong while accesing DB ");
-		}
-	}
+  async update(id: string, data: UpdateOTP) {
+    try {
+      const new_otp = await prisma.oTP.update({
+        where: {
+          otp_id: id,
+        },
+        data,
+      });
+      return new_otp;
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        throw new DBError(error.message);
+      }
+      throw new DBError("something went wrong while accesing DB OTP");
+    }
+  }
 }
