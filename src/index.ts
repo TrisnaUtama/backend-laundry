@@ -10,19 +10,31 @@ import { itemRouter } from "./presentation/router/item.route";
 import { detailOrderRouter } from "./presentation/router/detail_order.route";
 import { paymentRouter } from "./presentation/router/payment.route";
 import { rattingRouter } from "./presentation/router/ratting.route";
+import swagger from "@elysiajs/swagger";
+import cors from "@elysiajs/cors";
 
-const app = new Elysia({ prefix: "/api" })
-  .use(authRouter)
-  .use(userRouter)
-  .use(employeeRouter)
-  .use(addressRouter)
-  .use(itemTypeRouter)
-  .use(itemRouter)
-  .use(serviceRouter)
-  .use(orderRouter)
-  .use(detailOrderRouter)
-  .use(paymentRouter)
-  .use(rattingRouter)
+const app = new Elysia()
+  .use(cors())
+  .use(
+    swagger({
+      path: "/docs",
+    })
+  )
+  .group("/api", (app) =>
+    app
+      .use(authRouter)
+      .use(userRouter)
+      .use(employeeRouter)
+      .use(addressRouter)
+      .use(itemTypeRouter)
+      .use(itemRouter)
+      .use(serviceRouter)
+      .use(orderRouter)
+      .use(detailOrderRouter)
+      .use(paymentRouter)
+      .use(rattingRouter)
+  )
+
   .listen(3000);
 
 console.log(
