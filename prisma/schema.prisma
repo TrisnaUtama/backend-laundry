@@ -7,11 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  Admin
-  Staff
-}
-
 enum Order_Status {
   received
   canceled
@@ -36,20 +31,49 @@ enum Payment_Method {
   e_wallet
 }
 
+enum Role {
+  Admin
+  Staff
+  User
+}
+
 model User {
   user_id       String         @id @default(cuid())
   name          String
   email         String         @unique
   phone_number  String
   password      String
-  is_verified   Boolean        @default(false)
-  loyalty_points Int           @default(0)
+  is_verified   Boolean?  
+  status        Boolean  @default(true)      
+  role          Role
   created_at    DateTime       @default(now())
-  updated_at    DateTime       @updatedAt
+  updated_at    DateTime?       @updatedAt
+  refresh_token String?
+  isOnline      Boolean @default(false)
   orders        Order[]
   otp           OTP[]
-  rattings       Ratting[]
+  rattings      Ratting[]
   addresses     Address[]
+}
+model Employee {
+  employee_id String   @id @default(cuid())
+  name        String
+  status      Boolean  @default(true)
+  email       String   @unique
+  refresh_token String?
+  role        Role
+  created_at  DateTime @default(now())
+  updated_at  DateTime? @updatedAt
+}
+model Address {
+  user_address_id String    @id @default(cuid())
+  user_id         String
+  address         String
+  is_default      Boolean   @default(false)
+  created_at      DateTime  @default(now())
+  updated_at      DateTime?  @updatedAt
+  user            User      @relation(fields: [user_id], references: [user_id])
+  orders          Order[]
 }
 
 model OTP {
@@ -62,35 +86,14 @@ model OTP {
 }
 
 model Ratting {
-  ratting_id  String   @id @default(cuid())
+  ratting_id String   @id @default(cuid())
   user_id    String
   order_id   String   @unique
-  ratting     Int
+  ratting    Int
   comment    String
   created_at DateTime @default(now())
   user       User     @relation(fields: [user_id], references: [user_id])
   order      Order    @relation(fields: [order_id], references: [order_id])
-}
-
-model Address {
-  user_address_id String    @id @default(cuid())
-  user_id         String
-  address         String
-  is_default      Boolean   @default(false)
-  created_at      DateTime  @default(now())
-  updated_at      DateTime  @updatedAt
-  user            User      @relation(fields: [user_id], references: [user_id])
-  orders          Order[]
-}
-
-model Employee {
-  employee_id String   @id @default(cuid())
-  name        String
-  status      Boolean  @default(true)
-  email       String   @unique
-  role        Role
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
 }
 
 model Service {
@@ -111,7 +114,7 @@ model Item {
   item_type_id  String
   name          String
   created_at    DateTime       @default(now())
-  updated_at    DateTime       @updatedAt
+  updated_at    DateTime?       @updatedAt
   detail_orders Detail_Order[]
   item_type     Item_Type      @relation(fields: [item_type_id], references: [item_type_id])
 }
@@ -120,7 +123,7 @@ model Item_Type {
   item_type_id String    @id @default(cuid())
   name         String
   created_at   DateTime  @default(now())
-  updated_at   DateTime  @updatedAt
+  updated_at   DateTime?  @updatedAt
   items        Item[]
   services     Service[]
 }
@@ -136,7 +139,7 @@ model Order {
   special_notes String?
   is_express    Boolean      @default(false)
   created_at    DateTime     @default(now())
-  updated_at    DateTime     @updatedAt
+  updated_at    DateTime?     @updatedAt
   user          User         @relation(fields: [user_id], references: [user_id])
   address       Address @relation(fields: [address_id], references: [user_address_id])
   payment       Payment[]
@@ -154,7 +157,7 @@ model Detail_Order {
   weight          Decimal?
   price           Decimal
   created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
+  updated_at      DateTime? @updatedAt
   order           Order    @relation(fields: [order_id], references: [order_id])
   item            Item     @relation(fields: [item_id], references: [item_id])
   service         Service  @relation(fields: [service_id], references: [service_id])
@@ -168,6 +171,6 @@ model Payment {
   payment_status Payment_Status @default(pending)
   transaction_id String?        @unique
   created_at     DateTime       @default(now())
-  updated_at     DateTime       @updatedAt
+  updated_at     DateTime?       @updatedAt
   order          Order          @relation(fields: [order_id], references: [order_id])
 }

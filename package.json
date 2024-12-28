@@ -9,12 +9,20 @@
 		"prepare": "husky"
 	},
 	"dependencies": {
+		"@elysiajs/jwt": "^1.2.0",
 		"@prisma/client": "^6.1.0",
 		"elysia": "latest",
-		"prisma": "^6.1.0"
+		"install": "^0.13.0",
+		"inversify": "^6.2.1",
+		"nodemailer": "^6.9.16",
+		"prisma": "^6.1.0",
+		"jsonwebtoken": "^9.0.2" ,
+		"reflect-metadata": "^0.2.2"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",
+		"@types/jsonwebtoken": "^9.0.7",
+		"@types/nodemailer": "^6.4.17",
 		"bun-types": "latest",
 		"husky": "^9.1.7"
 	},
