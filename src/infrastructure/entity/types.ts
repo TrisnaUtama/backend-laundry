@@ -1,50 +1,73 @@
-import type { Address, Item_Type, OTP, Service, User } from "@prisma/client";
+import type {
+  Address,
+  Detail_Order,
+  Item,
+  Item_Type,
+  Order,
+  OTP,
+  Payment,
+  Service,
+  User,
+} from "@prisma/client";
 
 export const TYPES = {
-	// repository
-	userRepo: Symbol.for("UserRepository"),
-	otpRepo: Symbol.for("OTPRepository"),
-	addressRepo: Symbol.for("AddressRepository"),
-	employeeRepo: Symbol.for("EmployeeRepository"),
-	itemTypeRepo: Symbol.for("ItemTypeRepository"),
-	servicesRepo: Symbol.for("ServicesRepository"),
+  // repository
+  userRepo: Symbol.for("UserRepository"),
+  otpRepo: Symbol.for("OTPRepository"),
+  addressRepo: Symbol.for("AddressRepository"),
+  employeeRepo: Symbol.for("EmployeeRepository"),
+  itemTypeRepo: Symbol.for("ItemTypeRepository"),
+  servicesRepo: Symbol.for("ServicesRepository"),
+  itemRepo: Symbol.for("ItemRepository"),
+  orderRepo: Symbol.for("OrderRepository"),
+  detailOrderRepo: Symbol.for("DetailOrderRepository"),
+  paymentRepo: Symbol.for("PaymentRepository"),
 };
 
 // creates
 export type CreateUser = Omit<
-	User,
-	| "user_id"
-	| "created_at"
-	| "updated_at"
-	| "refresh_token"
-	| "isOnline"
-	| "is_verified"
-	| "status"
-	| "role"
+  User,
+  | "user_id"
+  | "created_at"
+  | "updated_at"
+  | "refresh_token"
+  | "isOnline"
+  | "is_verified"
+  | "status"
+  | "role"
 >;
-
 export type CreateEmployee = Omit<
-	User,
-	| "user_id"
-	| "created_at"
-	| "updated_at"
-	| "refresh_token"
-	| "isOnline"
-	| "is_verified"
-	| "status"
+  User,
+  | "user_id"
+  | "created_at"
+  | "updated_at"
+  | "refresh_token"
+  | "isOnline"
+  | "is_verified"
+  | "status"
 >;
 export type CreateOTP = Omit<OTP, "otp_id" | "created_at">;
 export type CreateAddress = Omit<
-	Address,
-	"user_address_id" | "updated_at" | "created_at" | "is_default"
+  Address,
+  "user_address_id" | "updated_at" | "created_at" | "is_default"
 >;
 export type CreateItemType = Omit<
-	Item_Type,
-	"item_type_id" | "updated_at" | "created_at"
+  Item_Type,
+  "item_type_id" | "updated_at" | "created_at"
 >;
 export type CreateServices = Omit<
-	Service,
-	"service_id" | "updated_at" | "created_at"
+  Service,
+  "service_id" | "updated_at" | "created_at"
+>;
+export type CreateItem = Omit<Item, "item_id" | "updated_at" | "created_at">;
+export type CreateOrder = Omit<Order, "order_id" | "updated_at" | "created_at">;
+export type CreateDetailOrder = Omit<
+  Detail_Order,
+  "detail_order_id" | "updated_at" | "created_at"
+>;
+export type CreatePayment = Omit<
+  Payment,
+  "payment_id" | "updated_at" | "created_at"
 >;
 
 // updates
@@ -53,3 +76,7 @@ export type UpdateAddress = Partial<Address>;
 export type UpdateOTP = Partial<OTP>;
 export type UpdateItemType = Partial<Item_Type>;
 export type UpdateServices = Partial<Service>;
+export type UpdateItem = Partial<Item>;
+export type UpdateOrder = Partial<Order>;
+export type UpdateDetailOrder = Partial<Detail_Order>;
+export type UpdatePayment = Partial<Payment>;

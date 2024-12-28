@@ -12,6 +12,7 @@ import { ItemTypeRepository } from "../infrastructure/db/item_type.repo";
 import { ItemTypeServices } from "./services/item_type.services";
 import { ServicesRepository } from "../infrastructure/db/services.repo";
 import { ServiceServices } from "./services/service.services";
+import { ItemServices } from "./services/item.services";
 
 const container = new Container();
 
@@ -22,6 +23,7 @@ container.bind<AddressRepository>(TYPES.addressRepo).to(AddressRepository);
 container.bind<EmployeeRepository>(TYPES.employeeRepo).to(EmployeeRepository);
 container.bind<ItemTypeRepository>(TYPES.itemTypeRepo).to(ItemTypeRepository);
 container.bind<ServicesRepository>(TYPES.servicesRepo).to(ServicesRepository);
+container.bind<ItemTypeRepository>(TYPES.itemRepo).to(ItemTypeRepository);
 
 // bind services
 container.bind<AuthServices>(AuthServices).toSelf();
@@ -30,13 +32,15 @@ container.bind<UserServices>(UserServices).toSelf();
 container.bind<EmployeeServices>(EmployeeServices).toSelf();
 container.bind<ItemTypeServices>(ItemTypeServices).toSelf();
 container.bind<ServiceServices>(ServiceServices).toSelf();
+container.bind<ItemServices>(ItemServices).toSelf();
 
 // instances
 export const authServices = container.get<AuthServices>(AuthServices);
 export const addressServices = container.get<AddressServices>(AddressServices);
 export const userServices = container.get<UserServices>(UserServices);
 export const employeeServices =
-	container.get<EmployeeServices>(EmployeeServices);
+  container.get<EmployeeServices>(EmployeeServices);
 export const itemTypeServices =
-	container.get<ItemTypeServices>(ItemTypeServices);
+  container.get<ItemTypeServices>(ItemTypeServices);
 export const services = container.get<ServiceServices>(ServiceServices);
+export const itemServices = container.get<ItemServices>(ItemServices);

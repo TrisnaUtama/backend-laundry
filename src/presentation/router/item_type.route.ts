@@ -4,7 +4,6 @@ import { Elysia, t } from "elysia";
 import { authServices, itemTypeServices } from "../../application/instance";
 import { JWT_NAME } from "../../constant/constant";
 import { verifyJwt } from "../../infrastructure/utils/jwtSign";
-import { Role } from "@prisma/client";
 
 export const itemTypeRouter = new Elysia({ prefix: "/v1/item_types" })
 	.use(
