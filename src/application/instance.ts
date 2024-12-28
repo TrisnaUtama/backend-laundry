@@ -50,8 +50,8 @@ container.bind<ServiceServices>(ServiceServices).toSelf();
 container.bind<ItemServices>(ItemServices).toSelf();
 container.bind<OrderServices>(OrderServices).toSelf();
 container.bind<DetailOrderServices>(DetailOrderServices).toSelf();
-container.bind<PaymentRepository>(PaymentRepository).toSelf();
-container.bind<RattingRepository>(RattingRepository).toSelf();
+container.bind<PaymentServices>(PaymentServices).toSelf();
+container.bind<RattingServices>(RattingServices).toSelf();
 
 // instances
 export const authServices = container.get<AuthServices>(AuthServices);
