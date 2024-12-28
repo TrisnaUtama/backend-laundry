@@ -71,15 +71,4 @@ export class OrderRepository implements IOrder {
       throw new DBError("error while accesing DB order");
     }
   }
-
-  async delete(id: string) {
-    try {
-      await prisma.order.delete({ where: { order_id: id } });
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        throw new DBError(error.message);
-      }
-      throw new DBError("error while accesing DB order");
-    }
-  }
 }

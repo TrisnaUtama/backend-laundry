@@ -19,6 +19,7 @@ import type {
   CreateOrder,
   CreateOTP,
   CreatePayment,
+  CreateRating,
   CreateServices,
   CreateUser,
   UpdateAddress,
@@ -39,13 +40,6 @@ export interface IUser {
   update: (id: string, data: UpdateUser) => Promise<User>;
   delete: (id: string) => Promise<void>;
 }
-export interface IEmployee {
-  getAll: () => Promise<User[]>;
-  getOne: (id: string) => Promise<User | null>;
-  create: (data: CreateEmployee) => Promise<User | null>;
-  update: (id: string, data: UpdateUser) => Promise<User>;
-  delete: (id: string) => Promise<void>;
-}
 
 export interface IAddress {
   getAll: (id: string) => Promise<Address[]>;
@@ -63,9 +57,9 @@ export interface IOTP {
 }
 
 export interface IRatting {
-  getAll: () => Promise<Ratting | null>;
+  getAll: () => Promise<Ratting[]>;
   getOne: (id: string) => Promise<Ratting | null>;
-  create: (data: Omit<Ratting, "ratting_id">) => Promise<Ratting>;
+  create: (data: CreateRating) => Promise<Ratting>;
   delete: (id: string) => Promise<void>;
 }
 
@@ -99,7 +93,6 @@ export interface IOrder {
   getOne: (id: string) => Promise<Order | null>;
   create: (data: CreateOrder) => Promise<Order>;
   update: (id: string, data: UpdateOrder) => Promise<Order>;
-  delete: (id: string) => Promise<void>;
 }
 export interface IDetailOrder {
   getAll: () => Promise<Detail_Order[]>;

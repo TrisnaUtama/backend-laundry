@@ -1,4 +1,5 @@
 import { inject, injectable } from "inversify";
+import "reflect-metadata";
 import type { EmployeeRepository } from "../../infrastructure/db/employee.repo";
 import { TYPES } from "../../infrastructure/entity/types";
 import type {

@@ -4,6 +4,7 @@ import type {
 } from "../../infrastructure/entity/types";
 import type { ItemTypeRepository } from "../../infrastructure/db/item_type.repo";
 import { inject, injectable } from "inversify";
+import "reflect-metadata";
 import { TYPES } from "../../infrastructure/entity/types";
 
 @injectable()

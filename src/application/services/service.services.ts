@@ -4,6 +4,7 @@ import type {
 	UpdateServices,
 } from "../../infrastructure/entity/types";
 import { inject, injectable } from "inversify";
+import "reflect-metadata";
 import { TYPES } from "../../infrastructure/entity/types";
 
 @injectable()

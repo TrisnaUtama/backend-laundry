@@ -18,7 +18,7 @@ export class AddressRepository implements IAddress {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
 				throw new DBError(error.message);
 			}
-			throw new DBError("something went wrong while accesing DB Repo address");
+			throw new DBError("something went wrong while accesing DB address");
 		}
 	}
 
@@ -35,7 +35,7 @@ export class AddressRepository implements IAddress {
 				throw new DBError(error.message);
 			}
 		}
-		throw new DBError("something went wrong while accesing DB Repo address");
+		throw new DBError("something went wrong while accesing DB address");
 	}
 
 	async create(data: CreateAddress) {
@@ -70,7 +70,7 @@ export class AddressRepository implements IAddress {
 				throw new DBError(error.message);
 			}
 		}
-		throw new DBError("something went wrong while accesing DB Repo");
+		throw new DBError("something went wrong while accesing DB address");
 	}
 
 	async delete(id: string) {
@@ -85,6 +85,6 @@ export class AddressRepository implements IAddress {
 				throw new DBError(error.message);
 			}
 		}
-		throw new DBError("something went wrong while accesing DB Repo address");
+		throw new DBError("something went wrong while accesing DB address");
 	}
 }

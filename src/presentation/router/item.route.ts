@@ -1,11 +1,11 @@
 import jwt from "@elysiajs/jwt";
 import type { IJwtPayload } from "../../infrastructure/entity/interface";
 import { Elysia, t } from "elysia";
-import { authServices, itemTypeServices } from "../../application/instance";
+import { authServices, itemServices } from "../../application/instance";
 import { JWT_NAME } from "../../constant/constant";
 import { verifyJwt } from "../../infrastructure/utils/jwtSign";
 
-export const itemTypeRouter = new Elysia({ prefix: "/v1/item_types" })
+export const itemRouter = new Elysia({ prefix: "/v1/items" })
   .use(
     jwt({
       name: JWT_NAME,
@@ -43,63 +43,64 @@ export const itemTypeRouter = new Elysia({ prefix: "/v1/item_types" })
   })
   .get("/", async ({ set }) => {
     try {
-      const item_types = await itemTypeServices.getAll();
+      const items = await itemServices.getAll();
 
-      if (!item_types) {
+      if (!items) {
         set.status = 400;
         throw new Error("server cannot process your request");
       }
 
       set.status = 200;
-      return item_types;
+      return items;
     } catch (error) {
       set.status = 500;
       if (error instanceof Error) {
         throw new Error(error.message);
       }
-      throw new Error("something wrong while accesing item type routes");
+      throw new Error("something wrong while accesing item routes");
     }
   })
   .get("/:id", async ({ params, set }) => {
     try {
-      const item_type = await itemTypeServices.getOne(params.id);
-      if (!item_type) {
+      const item = await itemServices.getOne(params.id);
+      if (!item) {
         set.status = 400;
         throw new Error("server cannot process your request !");
       }
 
       set.status = 200;
-      return item_type;
+      return item;
     } catch (error) {
       set.status = 500;
       if (error instanceof Error) {
         throw new Error(error.message);
       }
-      throw new Error("something wrong while accesing item type routes");
+      throw new Error("something wrong while accesing item routes");
     }
   })
   .post(
     "/",
     async ({ body, set }) => {
       try {
-        const new_item_type = await itemTypeServices.create(body);
-        if (!new_item_type) {
+        const new_item = await itemServices.create(body);
+        if (!new_item) {
           set.status = 400;
           throw new Error("server cannot process your request !");
         }
 
         set.status = 201;
-        return new_item_type;
+        return new_item;
       } catch (error) {
         set.status = 500;
         if (error instanceof Error) {
           throw new Error(error.message);
         }
-        throw new Error("something wrong while accesing item type routes");
+        throw new Error("something wrong while accesing item routes");
       }
     },
     {
       body: t.Object({
+        item_type_id: t.String(),
         name: t.String(),
       }),
     }
@@ -108,28 +109,26 @@ export const itemTypeRouter = new Elysia({ prefix: "/v1/item_types" })
     "/:id",
     async ({ set, params, body }) => {
       try {
-        const updated_item_type = await itemTypeServices.update(
-          params.id,
-          body
-        );
-        if (!updated_item_type) {
+        const updated_item = await itemServices.update(params.id, body);
+        if (!updated_item) {
           set.status = 400;
           throw new Error("server cannot process your request");
         }
 
         set.status = 201;
-        return updated_item_type;
+        return updated_item;
       } catch (error) {
         set.status = 500;
         if (error instanceof Error) {
           throw new Error(error.message);
         }
-        throw new Error("something wrong while accesing item type routes");
+        throw new Error("something wrong while accesing item routes");
       }
     },
     {
       body: t.Partial(
         t.Object({
+          item_type_id: t.String(),
           name: t.String(),
         })
       ),
@@ -137,13 +136,13 @@ export const itemTypeRouter = new Elysia({ prefix: "/v1/item_types" })
   )
   .delete("/:id", async ({ set, params }) => {
     try {
-      await itemTypeServices.delete(params.id);
+      await itemServices.delete(params.id);
       set.status = 204;
     } catch (error) {
       set.status = 500;
       if (error instanceof Error) {
         throw new Error(error.message);
       }
-      throw new Error("something wrong while accesing item type routes");
+      throw new Error("something wrong while accesing item routes");
     }
   });

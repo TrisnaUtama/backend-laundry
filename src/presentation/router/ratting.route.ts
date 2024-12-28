@@ -1,11 +1,11 @@
 import jwt from "@elysiajs/jwt";
 import type { IJwtPayload } from "../../infrastructure/entity/interface";
 import { Elysia, t } from "elysia";
-import { authServices, itemTypeServices } from "../../application/instance";
+import { authServices, rattingServices } from "../../application/instance";
 import { JWT_NAME } from "../../constant/constant";
 import { verifyJwt } from "../../infrastructure/utils/jwtSign";
 
-export const itemTypeRouter = new Elysia({ prefix: "/v1/item_types" })
+export const rattingRouter = new Elysia({ prefix: "/v1/rattings" })
   .use(
     jwt({
       name: JWT_NAME,
@@ -24,11 +24,6 @@ export const itemTypeRouter = new Elysia({ prefix: "/v1/item_types" })
       throw new Error("Forbidden");
     }
 
-    if (jwtPayload.role === "User" || jwtPayload.role === "Staff") {
-      set.status = 403;
-      throw new Error("Forbidden");
-    }
-
     const userId = jwtPayload.user_id;
     if (!userId) throw new Error("invalid payload !");
     const user = await authServices.decodeUser(userId.toString());
@@ -43,107 +38,79 @@ export const itemTypeRouter = new Elysia({ prefix: "/v1/item_types" })
   })
   .get("/", async ({ set }) => {
     try {
-      const item_types = await itemTypeServices.getAll();
+      const rattings = await rattingServices.getAll();
 
-      if (!item_types) {
+      if (!rattings) {
         set.status = 400;
         throw new Error("server cannot process your request");
       }
 
       set.status = 200;
-      return item_types;
+      return rattings;
     } catch (error) {
       set.status = 500;
       if (error instanceof Error) {
         throw new Error(error.message);
       }
-      throw new Error("something wrong while accesing item type routes");
+      throw new Error("something wrong while accesing rattings routes");
     }
   })
   .get("/:id", async ({ params, set }) => {
     try {
-      const item_type = await itemTypeServices.getOne(params.id);
-      if (!item_type) {
+      const ratting = await rattingServices.getOne(params.id);
+      if (!ratting) {
         set.status = 400;
         throw new Error("server cannot process your request !");
       }
 
       set.status = 200;
-      return item_type;
+      return ratting;
     } catch (error) {
       set.status = 500;
       if (error instanceof Error) {
         throw new Error(error.message);
       }
-      throw new Error("something wrong while accesing item type routes");
+      throw new Error("something wrong while accesing rattings routes");
     }
   })
   .post(
     "/",
     async ({ body, set }) => {
       try {
-        const new_item_type = await itemTypeServices.create(body);
-        if (!new_item_type) {
+        const new_ratting = await rattingServices.create(body);
+        if (!new_ratting) {
           set.status = 400;
           throw new Error("server cannot process your request !");
         }
 
         set.status = 201;
-        return new_item_type;
+        return new_ratting;
       } catch (error) {
         set.status = 500;
         if (error instanceof Error) {
           throw new Error(error.message);
         }
-        throw new Error("something wrong while accesing item type routes");
+        throw new Error("something wrong while accesing rattings routes");
       }
     },
     {
       body: t.Object({
-        name: t.String(),
+        user_id: t.String(),
+        order_id: t.String(),
+        ratting: t.Number(),
+        comment: t.String(),
       }),
-    }
-  )
-  .patch(
-    "/:id",
-    async ({ set, params, body }) => {
-      try {
-        const updated_item_type = await itemTypeServices.update(
-          params.id,
-          body
-        );
-        if (!updated_item_type) {
-          set.status = 400;
-          throw new Error("server cannot process your request");
-        }
-
-        set.status = 201;
-        return updated_item_type;
-      } catch (error) {
-        set.status = 500;
-        if (error instanceof Error) {
-          throw new Error(error.message);
-        }
-        throw new Error("something wrong while accesing item type routes");
-      }
-    },
-    {
-      body: t.Partial(
-        t.Object({
-          name: t.String(),
-        })
-      ),
     }
   )
   .delete("/:id", async ({ set, params }) => {
     try {
-      await itemTypeServices.delete(params.id);
+      await rattingServices.delete(params.id);
       set.status = 204;
     } catch (error) {
       set.status = 500;
       if (error instanceof Error) {
         throw new Error(error.message);
       }
-      throw new Error("something wrong while accesing item type routes");
+      throw new Error("something wrong while accesing rattings routes");
     }
   });

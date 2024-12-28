@@ -6,6 +6,7 @@ import type {
   Order,
   OTP,
   Payment,
+  Ratting,
   Service,
   User,
 } from "@prisma/client";
@@ -22,6 +23,7 @@ export const TYPES = {
   orderRepo: Symbol.for("OrderRepository"),
   detailOrderRepo: Symbol.for("DetailOrderRepository"),
   paymentRepo: Symbol.for("PaymentRepository"),
+  rattingRepo: Symbol.for("RattingRepository"),
 };
 
 // creates
@@ -60,15 +62,28 @@ export type CreateServices = Omit<
   "service_id" | "updated_at" | "created_at"
 >;
 export type CreateItem = Omit<Item, "item_id" | "updated_at" | "created_at">;
-export type CreateOrder = Omit<Order, "order_id" | "updated_at" | "created_at">;
+export type CreateOrder = Omit<
+  Order,
+  | "order_id"
+  | "updated_at"
+  | "created_at"
+  | "delivery_date"
+  | "cancellation_reason"
+  | "status"
+>;
 export type CreateDetailOrder = Omit<
   Detail_Order,
-  "detail_order_id" | "updated_at" | "created_at"
+  "detail_order_id" | "updated_at" | "created_at" | "price" | "weight"
 >;
 export type CreatePayment = Omit<
   Payment,
-  "payment_id" | "updated_at" | "created_at"
+  | "payment_id"
+  | "updated_at"
+  | "created_at"
+  | "payment_method"
+  | "payment_status"
 >;
+export type CreateRating = Omit<Ratting, "ratting_id" | "created_at">;
 
 // updates
 export type UpdateUser = Partial<User>;

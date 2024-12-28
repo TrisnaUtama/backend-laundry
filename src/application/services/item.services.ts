@@ -2,6 +2,7 @@ import type { ItemRepository } from "../../infrastructure/db/item.repo";
 import type { CreateItem, UpdateItem } from "../../infrastructure/entity/types";
 import { TYPES } from "../../infrastructure/entity/types";
 import { inject, injectable } from "inversify";
+import "reflect-metadata";
 
 @injectable()
 export class ItemServices {
