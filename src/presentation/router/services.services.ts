@@ -1,12 +1,16 @@
 import jwt from "@elysiajs/jwt";
-import { Elysia, t } from "elysia";
 import type { IJwtPayload } from "../../infrastructure/entity/interface";
-import { authServices, employeeServices } from "../../application/instance";
+import type {
+  CreateServices,
+  UpdateServices,
+} from "../../infrastructure/entity/types";
+import { Elysia, t } from "elysia";
+import { authServices, services } from "../../application/instance";
 import { JWT_NAME } from "../../constant/constant";
 import { verifyJwt } from "../../infrastructure/utils/jwtSign";
-import { Role } from "@prisma/client";
+import { Decimal } from "@prisma/client/runtime/library";
 
-export const employeeRouter = new Elysia({ prefix: "/v1/employees" })
+export const serviceRouter = new Elysia({ prefix: "/v1/services" })
   .use(
     jwt({
       name: JWT_NAME,
@@ -44,26 +48,26 @@ export const employeeRouter = new Elysia({ prefix: "/v1/employees" })
   })
   .get("/", async ({ set }) => {
     try {
-      const employees = await employeeServices.getAll();
+      const item_types = await services.getAll();
 
-      if (!employees) {
+      if (!item_types) {
         set.status = 400;
         throw new Error("server cannot process your request");
       }
 
       set.status = 200;
-      return employees;
+      return item_types;
     } catch (error) {
       set.status = 500;
       if (error instanceof Error) {
         throw new Error(error.message);
       }
-      throw new Error("something wrong while accesing employee routes");
+      throw new Error("something wrong while accesing services routes");
     }
   })
-  .get("/:id", async ({ user, set }) => {
+  .get("/:id", async ({ params, set }) => {
     try {
-      const employee = await employeeServices.getOne(user.user_id);
+      const employee = await services.getOne(params.id);
       if (!employee) {
         set.status = 400;
         throw new Error("server cannot process your request !");
@@ -76,84 +80,99 @@ export const employeeRouter = new Elysia({ prefix: "/v1/employees" })
       if (error instanceof Error) {
         throw new Error(error.message);
       }
-      throw new Error("something wrong while accesing employee routes");
+      throw new Error("something wrong while accesing services routes");
     }
   })
   .post(
     "/",
     async ({ body, set }) => {
       try {
-        const new_employee = await employeeServices.registerEmployee(body);
-        if (!new_employee) {
+        const new_services: CreateServices = {
+          item_type_id: body.item_type_id,
+          description: body.description,
+          name: body.name,
+          estimated_hours: body.estimated_hours,
+          price: new Decimal(Number.parseFloat(body.price.toString())),
+        };
+        const new_item_type = await services.create(new_services);
+        if (!new_item_type) {
           set.status = 400;
           throw new Error("server cannot process your request !");
         }
 
-        set.status = 200;
-        return new_employee;
+        set.status = 201;
+        return new_item_type;
       } catch (error) {
         set.status = 500;
         if (error instanceof Error) {
           throw new Error(error.message);
         }
-        throw new Error("something wrong while accesing employee routes");
+        throw new Error("something wrong while accesing services routes");
       }
     },
     {
       body: t.Object({
+        item_type_id: t.String(),
         name: t.String(),
-        email: t.String(),
-        password: t.String(),
-        phone_number: t.String(),
-        role: t.Enum(Role),
+        description: t.String(),
+        price: t.Number(),
+        estimated_hours: t.Number(),
       }),
     }
   )
   .patch(
     "/:id",
-    async ({ body, set, user }) => {
+    async ({ set, params, body }) => {
       try {
-        const updated_employee = await employeeServices.update(
-          user.user_id,
-          body
+        const updated_service: UpdateServices = {
+          item_type_id: body.item_type_id,
+          description: body.description,
+          name: body.name,
+          estimated_hours: body.estimated_hours,
+          price: body.price
+            ? new Decimal(Number.parseFloat(body.price.toString()))
+            : new Decimal(0),
+        };
+        const updated_item_type = await services.update(
+          params.id,
+          updated_service
         );
-
-        if (!updated_employee) {
+        if (!updated_item_type) {
           set.status = 400;
-          throw new Error("server cannot proccess your request !");
+          throw new Error("server cannot process your request");
         }
 
         set.status = 201;
-        return updated_employee;
+        return updated_item_type;
       } catch (error) {
         set.status = 500;
         if (error instanceof Error) {
           throw new Error(error.message);
         }
-        throw new Error("something wrong while accesing employee routes");
+        throw new Error("something wrong while accesing services routes");
       }
     },
     {
       body: t.Partial(
         t.Object({
+          item_type_id: t.String(),
           name: t.String(),
-          email: t.String(),
-          password: t.String(),
-          phone_number: t.String(),
-          role: t.Enum(Role),
+          description: t.String(),
+          price: t.Number(),
+          estimated_hours: t.Number(),
         })
       ),
     }
   )
-  .delete("/:id", async ({ params, set }) => {
+  .delete("/:id", async ({ set, params }) => {
     try {
-      await employeeServices.delete(params.id);
+      await services.delete(params.id);
       set.status = 204;
     } catch (error) {
       set.status = 500;
       if (error instanceof Error) {
         throw new Error(error.message);
       }
-      throw new Error("something wrong while accesing employee routes");
+      throw new Error("something wrong while accesing services routes");
     }
   });

@@ -9,7 +9,7 @@ import { Prisma } from "@prisma/client";
 import type { UserRepository } from "../../infrastructure/db/user.repo";
 
 @injectable()
-export class UserService {
+export class UserServices {
 	private userRepo: UserRepository;
 
 	constructor(@inject(TYPES.userRepo) userRepo: UserRepository) {

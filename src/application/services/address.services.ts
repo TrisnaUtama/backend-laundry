@@ -6,7 +6,7 @@ import "reflect-metadata";
 import { injectable, inject } from "inversify";
 
 @injectable()
-export class AddressService {
+export class AddressServices {
 	private addressRepo: AddressRepository;
 
 	constructor(@inject(TYPES.addressRepo) addressRepo: AddressRepository) {
