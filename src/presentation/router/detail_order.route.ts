@@ -3,7 +3,7 @@ import { Elysia, t } from "elysia";
 import type { IJwtPayload } from "../../infrastructure/entity/interface";
 import type { UpdateDetailOrder } from "../../infrastructure/entity/types";
 import { authServices, detailOrderServices } from "../../application/instance";
-import { JWT_NAME } from "../../constant/constant";
+import { JWT_NAME } from "../../infrastructure/constant/constant";
 import { verifyJwt } from "../../infrastructure/utils/jwtSign";
 import { Decimal } from "@prisma/client/runtime/library";
 

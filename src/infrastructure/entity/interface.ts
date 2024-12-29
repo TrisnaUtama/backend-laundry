@@ -40,6 +40,13 @@ export interface IUser {
   update: (id: string, data: UpdateUser) => Promise<User>;
   delete: (id: string) => Promise<void>;
 }
+export interface IEmployee {
+  getAll: () => Promise<User[]>;
+  getOne: (id: string) => Promise<User | null>;
+  create: (data: CreateEmployee) => Promise<User | null>;
+  update: (id: string, data: UpdateUser) => Promise<User>;
+  delete: (id: string) => Promise<void>;
+}
 
 export interface IAddress {
   getAll: (id: string) => Promise<Address[]>;

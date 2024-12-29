@@ -6,7 +6,7 @@ import type {
   UpdatePayment,
 } from "../../infrastructure/entity/types";
 import { authServices, paymentServices } from "../../application/instance";
-import { JWT_NAME } from "../../constant/constant";
+import { JWT_NAME } from "../../infrastructure/constant/constant";
 import { verifyJwt } from "../../infrastructure/utils/jwtSign";
 import { Payment_Method, Payment_Status } from "@prisma/client";
 

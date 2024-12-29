@@ -2,7 +2,7 @@ import jwt from "@elysiajs/jwt";
 import type { IJwtPayload } from "../../infrastructure/entity/interface";
 import { Elysia, t } from "elysia";
 import { authServices, itemTypeServices } from "../../application/instance";
-import { JWT_NAME } from "../../constant/constant";
+import { JWT_NAME } from "../../infrastructure/constant/constant";
 import { verifyJwt } from "../../infrastructure/utils/jwtSign";
 
 export const itemTypeRouter = new Elysia({ prefix: "/v1/item_types" })

@@ -1,10 +1,10 @@
 import { Prisma } from "@prisma/client";
-import type { IEmployee } from "../entity/interface";
-import type { CreateEmployee, UpdateUser } from "../entity/types";
+import type { IUser } from "../entity/interface";
+import type { CreateUser, UpdateUser } from "../entity/types";
 import { prisma } from "../utils/prisma";
 import { DBError } from "../entity/errors";
 
-export class UserRepository implements IEmployee {
+export class UserRepository implements IUser {
   async getAll() {
     try {
       const users = await prisma.user.findMany();
@@ -36,7 +36,7 @@ export class UserRepository implements IEmployee {
     }
   }
 
-  async create(data: CreateEmployee) {
+  async create(data: CreateUser) {
     try {
       const user = await prisma.user.create({
         data,

@@ -49,7 +49,7 @@ model User {
   password      String
   is_verified   Boolean?
   status        Boolean   @default(true)
-  role          Role
+  role          Role?
   created_at    DateTime  @default(now())
   updated_at    DateTime? @updatedAt
   refresh_token String?
