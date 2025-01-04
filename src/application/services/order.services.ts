@@ -6,36 +6,43 @@ import type {
   CreateOrder,
   UpdateOrder,
 } from "../../infrastructure/entity/types";
+import type { ILogger } from "../../infrastructure/entity/interface";
 import { inject, injectable } from "inversify";
 import "reflect-metadata";
 import { TYPES } from "../../infrastructure/entity/types";
+import { error } from "elysia";
 
 @injectable()
 export class OrderServices {
   private orderRepo: OrderRepository;
   private detailOrderRepo: DetailOrderRepository;
-  private servicesRepo: ServicesRepository;
+  private logger: ILogger;
 
   constructor(
     @inject(TYPES.orderRepo) orderRepo: OrderRepository,
-    @inject(TYPES.servicesRepo) serviceRepo: ServicesRepository,
-    @inject(TYPES.detailOrderRepo) detailOrderRepo: DetailOrderRepository
+    @inject(TYPES.detailOrderRepo) detailOrderRepo: DetailOrderRepository,
+    @inject(TYPES.logger) logger: ILogger
   ) {
     this.orderRepo = orderRepo;
     this.detailOrderRepo = detailOrderRepo;
-    this.servicesRepo = serviceRepo;
+    this.logger = logger;
   }
 
   async getAll() {
     try {
       const orders = await this.orderRepo.getAll();
-      if (orders.length === 0) throw new Error("orders is empty");
+      if (orders.length === 0) {
+        this.logger.error("orders is empty");
+        throw new Error("orders is empty");
+      }
 
       return orders;
     } catch (error) {
       if (error instanceof Error) {
+        this.logger.error(error.message);
         throw new Error(error.message);
       }
+      this.logger.error(error as string);
       throw new Error("something error while accesing order services");
     }
   }
@@ -43,13 +50,18 @@ export class OrderServices {
   async getAllByUserId(id: string) {
     try {
       const user_orders = await this.orderRepo.getAllByUserId(id);
-      if (!user_orders) throw new Error("orders is not found !");
+      if (!user_orders) {
+        this.logger.error("orders is not found !");
+        throw new Error("orders is not found !");
+      }
 
       return user_orders;
     } catch (error) {
       if (error instanceof Error) {
+        this.logger.error(error.message);
         throw new Error(error.message);
       }
+      this.logger.error(error as string);
       throw new Error("something error while accesing order services");
     }
   }
@@ -57,13 +69,18 @@ export class OrderServices {
   async getOne(id: string) {
     try {
       const order = await this.orderRepo.getOne(id);
-      if (!order) throw new Error("order not found !");
+      if (!order) {
+        this.logger.error("order not found !");
+        throw new Error("order not found !");
+      }
 
       return order;
     } catch (error) {
       if (error instanceof Error) {
+        this.logger.error(error.message);
         throw new Error(error.message);
       }
+      this.logger.error(error as string);
       throw new Error("something error while accesing order services");
     }
   }
@@ -82,8 +99,10 @@ export class OrderServices {
       return new_order;
     } catch (error) {
       if (error instanceof Error) {
+        this.logger.error(error.message);
         throw new Error(error.message);
       }
+      this.logger.error(error as string);
       throw new Error("something error while accesing order services");
     }
   }
@@ -95,8 +114,10 @@ export class OrderServices {
       return updated_order;
     } catch (error) {
       if (error instanceof Error) {
+        this.logger.error(error.message);
         throw new Error(error.message);
       }
+      this.logger.error(error as string);
       throw new Error("something error while accesing order services");
     }
   }

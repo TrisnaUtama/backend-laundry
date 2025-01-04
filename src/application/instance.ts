@@ -22,6 +22,8 @@ import { PaymentRepository } from "../infrastructure/db/payment.repo";
 import { PaymentServices } from "./services/payment.services";
 import { RattingRepository } from "../infrastructure/db/ratting.repo";
 import { RattingServices } from "./services/ratting.services";
+import { Logger } from "../infrastructure/logger/logger";
+import { ILogger } from "../infrastructure/entity/interface";
 
 const container = new Container();
 
@@ -39,6 +41,7 @@ container
   .to(DetailOrderRepository);
 container.bind<PaymentRepository>(TYPES.paymentRepo).to(PaymentRepository);
 container.bind<RattingRepository>(TYPES.rattingRepo).to(RattingRepository);
+container.bind<Logger>(TYPES.logger).to(Logger);
 
 // bind services
 container.bind<AuthServices>(AuthServices).toSelf();
@@ -52,6 +55,7 @@ container.bind<OrderServices>(OrderServices).toSelf();
 container.bind<DetailOrderServices>(DetailOrderServices).toSelf();
 container.bind<PaymentServices>(PaymentServices).toSelf();
 container.bind<RattingServices>(RattingServices).toSelf();
+container.bind<Logger>(Logger).toSelf();
 
 // instances
 export const authServices = container.get<AuthServices>(AuthServices);
@@ -68,3 +72,4 @@ export const detailOrderServices =
   container.get<DetailOrderServices>(DetailOrderServices);
 export const paymentServices = container.get<PaymentServices>(PaymentServices);
 export const rattingServices = container.get<RattingServices>(RattingServices);
+export const logger = container.get<Logger>(Logger);

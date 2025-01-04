@@ -4,13 +4,19 @@ import "reflect-metadata";
 import { injectable, inject } from "inversify";
 import { Prisma } from "@prisma/client";
 import type { UserRepository } from "../../infrastructure/db/user.repo";
+import type { ILogger } from "../../infrastructure/entity/interface";
 
 @injectable()
 export class UserServices {
   private userRepo: UserRepository;
+  private logger: ILogger;
 
-  constructor(@inject(TYPES.userRepo) userRepo: UserRepository) {
+  constructor(
+    @inject(TYPES.userRepo) userRepo: UserRepository,
+    @inject(TYPES.logger) logger: ILogger
+  ) {
     this.userRepo = userRepo;
+    this.logger = logger;
   }
 
   async getAll() {
@@ -19,8 +25,10 @@ export class UserServices {
       return users;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        this.logger.error(error.message);
         throw new Error(error.message);
       }
+      this.logger.error(error as string);
       throw new Error("error while accesing user service get one");
     }
   }
@@ -31,9 +39,11 @@ export class UserServices {
       return user;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        this.logger.error(error.message);
         throw new Error(error.message);
       }
-      throw new Error("error while accesing user service get one");
+      this.logger.error(error as string);
+      throw new Error("error while accesing user service ");
     }
   }
 
@@ -43,9 +53,11 @@ export class UserServices {
       return updated_user;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        this.logger.error(error.message);
         throw new Error(error.message);
       }
-      throw new Error("error while accesing user service get one");
+      this.logger.error(error as string);
+      throw new Error("error while accesing user service ");
     }
   }
 
@@ -54,9 +66,11 @@ export class UserServices {
       await this.userRepo.delete(id);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        this.logger.error(error.message);
         throw new Error(error.message);
       }
-      throw new Error("error while accesing user service get one");
+      this.logger.error(error as string);
+      throw new Error("error while accesing user service ");
     }
   }
 }

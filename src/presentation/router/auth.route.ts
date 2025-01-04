@@ -11,7 +11,6 @@ import {
 } from "../../infrastructure/constant/constant";
 import { AuthorizationError } from "../../infrastructure/entity/errors";
 import { signJwt, verifyJwt } from "../../infrastructure/utils/jwtSign";
-import { Role } from "@prisma/client";
 
 export const authRouter = new Elysia({ prefix: "/v1" })
   .post(

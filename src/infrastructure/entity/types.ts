@@ -24,6 +24,7 @@ export const TYPES = {
   detailOrderRepo: Symbol.for("DetailOrderRepository"),
   paymentRepo: Symbol.for("PaymentRepository"),
   rattingRepo: Symbol.for("RattingRepository"),
+  logger: Symbol.for("Logger"),
 };
 
 // creates

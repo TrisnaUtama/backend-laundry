@@ -117,6 +117,12 @@ export interface IPayment {
   delete: (id: string) => Promise<void>;
 }
 
+export interface ILogger {
+  info: (message: string) => void;
+  warn: (message: string) => void;
+  error: (message: string) => void;
+}
+
 export interface IJwtPayload {
   user_id: string;
   role: string | null;

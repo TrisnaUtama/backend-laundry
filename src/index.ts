@@ -1,10 +1,10 @@
 import { Elysia } from "elysia";
-import { authRouter } from "./presentation/router/auth.router";
+import { authRouter } from "./presentation/router/auth.route";
 import { addressRouter } from "./presentation/router/address.route";
 import { userRouter } from "./presentation/router/user.route";
 import { employeeRouter } from "./presentation/router/employee.route";
 import { itemTypeRouter } from "./presentation/router/item_type.route";
-import { serviceRouter } from "./presentation/router/services.services";
+import { serviceRouter } from "./presentation/router/services.route";
 import { orderRouter } from "./presentation/router/order.router";
 import { itemRouter } from "./presentation/router/item.route";
 import { detailOrderRouter } from "./presentation/router/detail_order.route";
@@ -35,7 +35,7 @@ const app = new Elysia()
       .use(rattingRouter)
   )
 
-  .listen(3000);
+  .listen(8000);
 
 console.log(
   `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`

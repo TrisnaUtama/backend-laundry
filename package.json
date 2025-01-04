@@ -19,7 +19,8 @@
 		"jsonwebtoken": "^9.0.2",
 		"nodemailer": "^6.9.16",
 		"prisma": "^6.1.0",
-		"reflect-metadata": "^0.2.2"
+		"reflect-metadata": "^0.2.2",
+		"winston": "^3.17.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",

@@ -1,19 +1,29 @@
-import type { IOTP } from "../entity/interface";
+import type { ILogger, IOTP } from "../entity/interface";
 import { prisma } from "../utils/prisma";
-import type { CreateOTP, UpdateOTP } from "../entity/types";
+import { TYPES, type CreateOTP, type UpdateOTP } from "../entity/types";
 import { Prisma } from "@prisma/client";
 import { DBError } from "../entity/errors";
+import "reflect-metadata";
+import { injectable, inject } from "inversify";
 
+@injectable()
 export class OTPRepository implements IOTP {
+  private logger: ILogger;
+
+  constructor(@inject(TYPES.logger) logger: ILogger) {
+    this.logger = logger;
+  }
   async getAll() {
     try {
       const otp = await prisma.oTP.findMany();
       return otp;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        this.logger.error(error.message);
         throw new DBError(error.message);
       }
-      throw new DBError("something went wrong while accesing  OTP");
+      this.logger.error(error as string);
+      throw new DBError("something went wrong while accesing DB OTP");
     }
   }
 
@@ -28,8 +38,10 @@ export class OTPRepository implements IOTP {
       return otp;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        this.logger.error(error.message);
         throw new DBError(error.message);
       }
+      this.logger.error(error as string);
       throw new DBError("something went wrong while accesing DB OTP");
     }
   }
@@ -43,9 +55,11 @@ export class OTPRepository implements IOTP {
       return new_otp;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        this.logger.error(error.message);
         throw new DBError(error.message);
       }
-      throw new DBError("something went wrong while accesing DB OTP ");
+      this.logger.error(error as string);
+      throw new DBError("something went wrong while accesing DB OTP");
     }
   }
 
@@ -60,8 +74,10 @@ export class OTPRepository implements IOTP {
       return new_otp;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        this.logger.error(error.message);
         throw new DBError(error.message);
       }
+      this.logger.error(error as string);
       throw new DBError("something went wrong while accesing DB OTP");
     }
   }

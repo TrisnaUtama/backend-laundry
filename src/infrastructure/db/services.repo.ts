@@ -1,18 +1,33 @@
-import type { CreateServices, UpdateServices } from "../entity/types";
-import type { IService } from "../entity/interface";
+import {
+  TYPES,
+  type CreateServices,
+  type UpdateServices,
+} from "../entity/types";
+import type { ILogger, IService } from "../entity/interface";
 import { DBError } from "../entity/errors";
 import { Prisma } from "@prisma/client";
 import { prisma } from "../utils/prisma";
+import "reflect-metadata";
+import { injectable, inject } from "inversify";
 
+injectable();
 export class ServicesRepository implements IService {
+  private logger: ILogger;
+
+  constructor(@inject(TYPES.logger) logger: ILogger) {
+    this.logger = logger;
+  }
+
   async getAll() {
     try {
       const services = await prisma.service.findMany();
       return services;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        this.logger.error(error.message);
         throw new DBError(error.message);
       }
+      this.logger.error(error as string);
       throw new DBError("something went wrong while accesing DB service");
     }
   }
@@ -31,8 +46,10 @@ export class ServicesRepository implements IService {
       return service;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        this.logger.error(error.message);
         throw new DBError(error.message);
       }
+      this.logger.error(error as string);
       throw new DBError("something went wrong while accesing DB service");
     }
   }
@@ -43,8 +60,10 @@ export class ServicesRepository implements IService {
       return new_service;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        this.logger.error(error.message);
         throw new DBError(error.message);
       }
+      this.logger.error(error as string);
       throw new DBError("something went wrong while accesing DB service");
     }
   }
@@ -59,8 +78,10 @@ export class ServicesRepository implements IService {
       return updated_service;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        this.logger.error(error.message);
         throw new DBError(error.message);
       }
+      this.logger.error(error as string);
       throw new DBError("something went wrong while accesing DB service");
     }
   }
@@ -70,8 +91,10 @@ export class ServicesRepository implements IService {
       await prisma.service.delete({ where: { service_id: id } });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        this.logger.error(error.message);
         throw new DBError(error.message);
       }
+      this.logger.error(error as string);
       throw new DBError("something went wrong while accesing DB service");
     }
   }

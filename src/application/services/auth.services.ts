@@ -2,6 +2,7 @@ import { Role, type OTP, type User } from "@prisma/client";
 import type { UserRepository } from "../../infrastructure/db/user.repo";
 import type { OTPRepository } from "../../infrastructure/db/otp.repo";
 import type { CreateUser, UpdateUser } from "../../infrastructure/entity/types";
+import type { ILogger } from "../../infrastructure/entity/interface";
 import "reflect-metadata";
 import { injectable, inject } from "inversify";
 import { TYPES } from "../../infrastructure/entity/types";
@@ -11,27 +12,32 @@ import {
   REFRESH_TOKEN_EXP,
 } from "../../infrastructure/constant/constant";
 import { signJwt } from "../../infrastructure/utils/jwtSign";
-import { password } from "bun";
 import { UserDTO } from "../dtos/userDTOS";
 
 @injectable()
 export class AuthServices {
   private userRepo: UserRepository;
   private otpRepo: OTPRepository;
+  private logger: ILogger;
 
   constructor(
     @inject(TYPES.userRepo) userRepo: UserRepository,
-    @inject(TYPES.otpRepo) otpRepo: OTPRepository
+    @inject(TYPES.otpRepo) otpRepo: OTPRepository,
+    @inject(TYPES.logger) logger: ILogger
   ) {
     this.userRepo = userRepo;
     this.otpRepo = otpRepo;
+    this.logger = logger;
   }
 
   async registerUser(data: CreateUser) {
     try {
       const exsisting_user = await this.userRepo.getOne(data.email);
 
-      if (exsisting_user) throw new Error("User Already Registered");
+      if (exsisting_user) {
+        this.logger.warn("user already registered !");
+        throw new Error("User Already Registered");
+      }
 
       const hashed_password = await Bun.password.hash(data.password, "bcrypt");
       const newData = {
@@ -46,8 +52,10 @@ export class AuthServices {
       return new UserDTO(create_user).fromEntity();
     } catch (error) {
       if (error instanceof Error) {
+        this.logger.error(error.message);
         throw new Error(error.message);
       }
+      this.logger.error(error as string);
       throw new Error("something went wrong while accessing register service");
     }
   }
@@ -57,10 +65,18 @@ export class AuthServices {
       const otp = await this.otpRepo.getOne(user_id);
       const date_now_wib = new Date(Date.now() + 7 * 60 * 60 * 1000).getTime();
 
-      if (!otp) throw new Error("invalid otp code");
-      if (otp.otp_code !== code) throw new Error("invalid OTP !");
-      if (date_now_wib > otp.expiry_time.getTime())
+      if (!otp) {
+        this.logger.warn("invalid otp code");
+        throw new Error("invalid otp code");
+      }
+      if (otp.otp_code !== code) {
+        this.logger.warn("invalid OTP !");
+        throw new Error("invalid OTP !");
+      }
+      if (date_now_wib > otp.expiry_time.getTime()) {
+        this.logger.warn("expired OTP !");
         throw new Error("expired OTP !");
+      }
 
       const updated_user_data: Partial<User> = {
         is_verified: true,
@@ -71,8 +87,10 @@ export class AuthServices {
       return true;
     } catch (error) {
       if (error instanceof Error) {
+        this.logger.error(error.message);
         throw new Error(error.message);
       }
+      this.logger.error(error as string);
       throw new Error("something went wrong while accessing register service");
     }
   }
@@ -102,8 +120,10 @@ export class AuthServices {
       await notifyEmail(randomCode, email);
     } catch (error) {
       if (error instanceof Error) {
+        this.logger.error(error.message);
         throw new Error(error.message);
       }
+      this.logger.error(error as string);
       throw new Error("something went wrong while accessing register service");
     }
   }
@@ -112,14 +132,24 @@ export class AuthServices {
     try {
       const get_user = await this.userRepo.getOne(email);
 
-      if (!get_user) throw new Error("Invalid Credentials");
-      if (!get_user.is_verified) throw new Error("verified your account !");
+      if (!get_user) {
+        this.logger.info("invalid credentials");
+        throw new Error("Invalid Credentials");
+      }
+      if (!get_user.is_verified) {
+        this.logger.info("verified your account !");
+        throw new Error("verified your account !");
+      }
+
       const compare_password = await Bun.password.verify(
         password,
         get_user.password,
         "bcrypt"
       );
-      if (!compare_password) throw new Error("Invalid Credentials");
+      if (!compare_password) {
+        this.logger.info("invalid credentials");
+        throw new Error("Invalid Credentials");
+      }
 
       const payload = {
         user_id: get_user.user_id,
@@ -134,7 +164,10 @@ export class AuthServices {
         isOnline: true,
       });
 
-      if (!updated_user) throw new Error("error while login in auth services");
+      if (!updated_user) {
+        this.logger.error("error while login in auth services");
+        throw new Error("error while login in auth services");
+      }
 
       return {
         accessToken,
@@ -143,9 +176,10 @@ export class AuthServices {
       };
     } catch (error) {
       if (error instanceof Error) {
-        console.log("data");
+        this.logger.info(error.message);
         throw new Error(error.message);
       }
+      this.logger.error(error as string);
       throw new Error("something went wrong while accessing register service");
     }
   }
@@ -156,8 +190,10 @@ export class AuthServices {
       return user;
     } catch (error) {
       if (error instanceof Error) {
+        this.logger.error(error.message);
         throw new Error(error.message);
       }
+      this.logger.error(error as string);
       throw new Error("something went wrong while accessing register service");
     }
   }
@@ -167,8 +203,10 @@ export class AuthServices {
       await this.userRepo.update(user_id, data);
     } catch (error) {
       if (error instanceof Error) {
+        this.logger.error(error.message);
         throw new Error(error.message);
       }
+      this.logger.error(error as string);
       throw new Error("something went wrong while accessing register service");
     }
   }
