@@ -11,41 +11,41 @@ import { verifyJwt } from "../../infrastructure/utils/jwtSign";
 import { Decimal } from "@prisma/client/runtime/library";
 
 export const serviceRouter = new Elysia({ prefix: "/v1/services" })
-	.use(
-		jwt({
-			name: JWT_NAME,
-			secret: `${process.env.JWT_SECRET}`,
-		}),
-	)
-	.derive(async ({ cookie: { access_token }, set }) => {
-		if (!access_token.value) {
-			set.status = 401;
-			throw new Error("Unauthorized");
-		}
-		const jwtPayload: IJwtPayload = verifyJwt(access_token.value.toString());
+	// .use(
+	// 	jwt({
+	// 		name: JWT_NAME,
+	// 		secret: `${process.env.JWT_SECRET}`,
+	// 	}),
+	// )
+	// .derive(async ({ cookie: { access_token }, set }) => {
+	// 	if (!access_token.value) {
+	// 		set.status = 401;
+	// 		throw new Error("Unauthorized");
+	// 	}
+	// 	const jwtPayload: IJwtPayload = verifyJwt(access_token.value.toString());
 
-		if (!jwtPayload) {
-			set.status = 403;
-			throw new Error("Forbidden");
-		}
+	// 	if (!jwtPayload) {
+	// 		set.status = 403;
+	// 		throw new Error("Forbidden");
+	// 	}
 
-		if (jwtPayload.role === "Staff") {
-			set.status = 403;
-			throw new Error("Forbidden");
-		}
+	// 	if (jwtPayload.role === "Staff") {
+	// 		set.status = 403;
+	// 		throw new Error("Forbidden");
+	// 	}
 
-		const userId = jwtPayload.user_id;
-		if (!userId) throw new Error("invalid payload !");
-		const user = await authServices.decodeUser(userId.toString());
-		if (!user) {
-			set.status = 403;
-			throw new Error("Forbidden");
-		}
+	// 	const userId = jwtPayload.user_id;
+	// 	if (!userId) throw new Error("invalid payload !");
+	// 	const user = await authServices.decodeUser(userId.toString());
+	// 	if (!user) {
+	// 		set.status = 403;
+	// 		throw new Error("Forbidden");
+	// 	}
 
-		return {
-			user,
-		};
-	})
+	// 	return {
+	// 		user,
+	// 	};
+	// })
 	.get("/", async ({ set }) => {
 		try {
 			const item_types = await services.getAll();
