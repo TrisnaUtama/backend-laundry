@@ -24,7 +24,7 @@ export const itemTypeRouter = new Elysia({ prefix: "/v1/item_types" })
       throw new Error("Forbidden");
     }
 
-    if (jwtPayload.role === "User" || jwtPayload.role === "Staff") {
+    if (jwtPayload.role === "Staff") {
       set.status = 403;
       throw new Error("Forbidden");
     }
@@ -131,6 +131,7 @@ export const itemTypeRouter = new Elysia({ prefix: "/v1/item_types" })
       body: t.Partial(
         t.Object({
           name: t.String(),
+          status: t.Boolean(),
         })
       ),
     }

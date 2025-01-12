@@ -8,66 +8,66 @@ import { injectable, inject } from "inversify";
 
 @injectable()
 export class RattingRepository implements IRatting {
-  private logger: ILogger;
+	private logger: ILogger;
 
-  constructor(@inject(TYPES.logger) logger: ILogger) {
-    this.logger = logger;
-  }
+	constructor(@inject(TYPES.logger) logger: ILogger) {
+		this.logger = logger;
+	}
 
-  async getAll() {
-    try {
-      const rattings = await prisma.ratting.findMany();
-      return rattings;
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        this.logger.error(error.message)
-        throw new DBError(error.message);
-      }
-      this.logger.error(error as string)
-      throw new DBError("error while accesing DB ratting");
-    }
-  }
+	async getAll() {
+		try {
+			const rattings = await prisma.ratting.findMany();
+			return rattings;
+		} catch (error) {
+			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+				this.logger.error(error.message);
+				throw new DBError(error.message);
+			}
+			this.logger.error(error as string);
+			throw new DBError("error while accesing DB ratting");
+		}
+	}
 
-  async getOne(id: string) {
-    try {
-      const ratting = await prisma.ratting.findUnique({
-        where: { ratting_id: id },
-      });
-      return ratting;
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        this.logger.error(error.message)
-        throw new DBError(error.message);
-      }
-      this.logger.error(error as string)
-      throw new DBError("error while accesing DB ratting");
-    }
-  }
+	async getOne(id: string) {
+		try {
+			const ratting = await prisma.ratting.findUnique({
+				where: { ratting_id: id },
+			});
+			return ratting;
+		} catch (error) {
+			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+				this.logger.error(error.message);
+				throw new DBError(error.message);
+			}
+			this.logger.error(error as string);
+			throw new DBError("error while accesing DB ratting");
+		}
+	}
 
-  async create(data: CreateRating) {
-    try {
-      const create_ratting = await prisma.ratting.create({ data });
-      return create_ratting;
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        this.logger.error(error.message)
-        throw new DBError(error.message);
-      }
-      this.logger.error(error as string)
-      throw new DBError("error while accesing DB ratting");
-    }
-  }
+	async create(data: CreateRating) {
+		try {
+			const create_ratting = await prisma.ratting.create({ data });
+			return create_ratting;
+		} catch (error) {
+			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+				this.logger.error(error.message);
+				throw new DBError(error.message);
+			}
+			this.logger.error(error as string);
+			throw new DBError("error while accesing DB ratting");
+		}
+	}
 
-  async delete(id: string) {
-    try {
-      await prisma.ratting.delete({ where: { ratting_id: id } });
-    } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        this.logger.error(error.message)
-        throw new DBError(error.message);
-      }
-      this.logger.error(error as string)
-      throw new DBError("error while accesing DB ratting");
-    }
-  }
+	async delete(id: string) {
+		try {
+			await prisma.ratting.delete({ where: { ratting_id: id } });
+		} catch (error) {
+			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+				this.logger.error(error.message);
+				throw new DBError(error.message);
+			}
+			this.logger.error(error as string);
+			throw new DBError("error while accesing DB ratting");
+		}
+	}
 }

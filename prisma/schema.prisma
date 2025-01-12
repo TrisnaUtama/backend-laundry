@@ -98,6 +98,7 @@ model Service {
   description     String
   price           Decimal
   estimated_hours Int
+  status          Boolean        @default(true)
   created_at      DateTime       @default(now())
   updated_at      DateTime       @updatedAt
   detail_orders   Detail_Order[]
@@ -108,6 +109,7 @@ model Service {
 model Item_Type {
   item_type_id String    @id @default(cuid())
   name         String
+  status       Boolean   @default(true)
   created_at   DateTime  @default(now())
   updated_at   DateTime? @updatedAt
   items        Item[]
@@ -129,6 +131,7 @@ model Order {
   order_id            String         @id @default(cuid())
   user_id             String
   address_id          String
+  delivery_address    String?
   item_id             String
   service_id          String
   status              Order_Status   @default(pending)

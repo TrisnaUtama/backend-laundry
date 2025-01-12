@@ -60,7 +60,7 @@ export class AuthServices {
     }
   }
 
-  async verifyAccoount(code: string, user_id: string) {
+  async verifyAccount(code: string, user_id: string) {
     try {
       const otp = await this.otpRepo.getOne(user_id);
       const date_now_wib = new Date(Date.now() + 7 * 60 * 60 * 1000).getTime();

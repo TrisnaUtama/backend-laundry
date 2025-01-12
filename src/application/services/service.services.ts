@@ -102,7 +102,10 @@ export class ServiceServices {
 
   async delete(id: string) {
     try {
-      await this.servicesRepo.delete(id);
+      const data = {
+        status: false,
+      };
+      await this.servicesRepo.update(id, data);
     } catch (error) {
       if (error instanceof Error) {
         this.logger.error(error.message);

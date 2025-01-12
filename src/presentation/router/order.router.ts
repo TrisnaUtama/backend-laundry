@@ -1,11 +1,16 @@
 import jwt from "@elysiajs/jwt";
 import { Elysia, t } from "elysia";
 import type { IJwtPayload } from "../../infrastructure/entity/interface";
-import type { UpdateOrder } from "../../infrastructure/entity/types";
+import type {
+  CreateItem,
+  CreateOrder,
+  UpdateOrder,
+} from "../../infrastructure/entity/types";
 import { authServices, orderServices } from "../../application/instance";
 import { JWT_NAME } from "../../infrastructure/constant/constant";
 import { verifyJwt } from "../../infrastructure/utils/jwtSign";
 import { Order_Status } from "@prisma/client";
+import { Decimal } from "@prisma/client/runtime/library";
 
 export const orderRouter = new Elysia({ prefix: "/v1/orders" })
   .use(
@@ -91,11 +96,26 @@ export const orderRouter = new Elysia({ prefix: "/v1/orders" })
     "/",
     async ({ set, body }) => {
       try {
-        const data_order = {
-          ...body,
+        const data_order: CreateOrder = {
+          user_id: body.user_id,
+          service_id: body.service_id,
+          address_id: body.address_id,
+          item_id: "",
+          pickup_date: new Date(body.pickup_date),
           special_notes: body.special_notes ?? null,
         };
-        const new_order = await orderServices.userCreateOrder(data_order);
+
+        const data_item: CreateItem = {
+          item_type_id: body.item_type_id,
+          name: body.name,
+        };
+        const weight = new Decimal(Number.parseFloat(body.weight.toString()));
+
+        const new_order = await orderServices.userCreateOrder(
+          data_order,
+          weight,
+          data_item
+        );
         if (!new_order) {
           set.status = 400;
           throw new Error("server cannot process your request");
@@ -114,11 +134,12 @@ export const orderRouter = new Elysia({ prefix: "/v1/orders" })
     {
       body: t.Object({
         user_id: t.String(),
-        item_id: t.String(),
+        item_type_id: t.String(),
         service_id: t.String(),
         address_id: t.String(),
-        pickup_date: t.Date(),
-        delivery_date: t.Date(),
+        pickup_date: t.String(),
+        weight: t.Number(),
+        name: t.String(),
         special_notes: t.Optional(t.String()),
       }),
     }

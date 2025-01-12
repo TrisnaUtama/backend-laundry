@@ -5,17 +5,21 @@ import { injectable, inject } from "inversify";
 import { Prisma } from "@prisma/client";
 import type { UserRepository } from "../../infrastructure/db/user.repo";
 import type { ILogger } from "../../infrastructure/entity/interface";
+import type { OTPRepository } from "../../infrastructure/db/otp.repo";
 
 @injectable()
 export class UserServices {
   private userRepo: UserRepository;
+  private otpRepo: OTPRepository;
   private logger: ILogger;
 
   constructor(
     @inject(TYPES.userRepo) userRepo: UserRepository,
-    @inject(TYPES.logger) logger: ILogger
+    @inject(TYPES.logger) logger: ILogger,
+    @inject(TYPES.otpRepo) otpRepo: OTPRepository
   ) {
     this.userRepo = userRepo;
+    this.otpRepo = otpRepo;
     this.logger = logger;
   }
 
@@ -63,7 +67,10 @@ export class UserServices {
 
   async delete(id: string) {
     try {
-      await this.userRepo.delete(id);
+      const data = {
+        status: false,
+      };
+      await this.userRepo.update(id, data);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         this.logger.error(error.message);

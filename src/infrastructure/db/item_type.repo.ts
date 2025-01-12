@@ -19,7 +19,11 @@ export class ItemTypeRepository implements IItem_Type {
   }
   async getAll() {
     try {
-      const item_types = await prisma.item_Type.findMany();
+      const item_types = await prisma.item_Type.findMany({
+        where: {
+          status: true,
+        },
+      });
       return item_types;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {

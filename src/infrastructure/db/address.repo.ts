@@ -36,7 +36,8 @@ export class AddressRepository implements IAddress {
     try {
       const address = await prisma.address.findFirst({
         where: {
-          OR: [{ user_address_id: idOrAddress }, { user_id: idOrAddress }],
+          is_default: true,
+          OR: [{ user_id: idOrAddress }, { user_address_id: idOrAddress }],
         },
       });
       return address;

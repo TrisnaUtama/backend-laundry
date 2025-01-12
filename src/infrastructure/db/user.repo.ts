@@ -3,7 +3,7 @@ import type { ILogger, IUser } from "../entity/interface";
 import { TYPES, type CreateUser, type UpdateUser } from "../entity/types";
 import { prisma } from "../utils/prisma";
 import { DBError } from "../entity/errors";
-import "reflect-metadata"
+import "reflect-metadata";
 import { injectable, inject } from "inversify";
 
 @injectable()
@@ -16,7 +16,11 @@ export class UserRepository implements IUser {
 
   async getAll() {
     try {
-      const users = await prisma.user.findMany();
+      const users = await prisma.user.findMany({
+        where: {
+          role: "User",
+        },
+      });
       return users;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -73,6 +77,7 @@ export class UserRepository implements IUser {
           email: data.email,
           name: data.name,
           phone_number: data.phone_number,
+		  status: data.status,
           refresh_token: data.refresh_token,
           isOnline: data.isOnline,
           is_verified: data.is_verified,

@@ -30,8 +30,10 @@ export class PaymentRepository implements IPayment {
 
   async getOne(id: string) {
     try {
-      const payment = await prisma.payment.findUnique({
-        where: { payment_id: id },
+      const payment = await prisma.payment.findFirst({
+        where: {
+          OR: [{ payment_id: id }, { order_id: id }],
+        },
       });
       return payment;
     } catch (error) {
@@ -60,8 +62,13 @@ export class PaymentRepository implements IPayment {
 
   async update(id: string, data: UpdatePayment) {
     try {
+      const payment = await prisma.payment.findFirst({
+        where: {
+          OR: [{ payment_id: id }, { order_id: id }],
+        },
+      });
       const updated_payment = await prisma.payment.update({
-        where: { payment_id: id },
+        where: { payment_id: payment?.payment_id },
         data,
       });
       return updated_payment;

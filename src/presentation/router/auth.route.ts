@@ -29,6 +29,7 @@ export const authRouter = new Elysia({ prefix: "/v1" })
         const address_data = {
           address: body.address,
           user_id: newUser.user_id,
+          is_default: true,
         };
         await addressServices.create(address_data);
 
@@ -56,7 +57,7 @@ export const authRouter = new Elysia({ prefix: "/v1" })
     "verify",
     async ({ body, set }) => {
       try {
-        const verify = await authServices.verifyAccoount(
+        const verify = await authServices.verifyAccount(
           body.code,
           body.user_id
         );
@@ -65,7 +66,9 @@ export const authRouter = new Elysia({ prefix: "/v1" })
         if (!verify) throw new Error("Invalid OTP code !");
 
         set.status = 200;
-        return "account is verified";
+        return {
+          message: "Account is verified",
+        };
       } catch (error) {
         set.status = 500;
         if (error instanceof Error) {
@@ -134,7 +137,7 @@ export const authRouter = new Elysia({ prefix: "/v1" })
           data: {
             user: login_user.user,
             access_token: login_user.accessToken,
-            refress_token: login_user.refreshToken,
+            refresh_token: login_user.refreshToken,
           },
         };
       } catch (error) {

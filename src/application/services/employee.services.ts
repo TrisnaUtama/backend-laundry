@@ -59,9 +59,11 @@ export class EmployeeServices {
       }
 
       const hashed_password = await Bun.password.hash(data.password, "bcrypt");
+
       const data_employee = {
         ...data,
         password: hashed_password,
+        is_verified: true,
       };
 
       const new_employee = await this.employeeRepo.create(data_employee);
@@ -92,7 +94,10 @@ export class EmployeeServices {
 
   async delete(id: string) {
     try {
-      await this.employeeRepo.delete(id);
+      const data = {
+        status: false,
+      };
+      await this.employeeRepo.update(id, data);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         this.logger.error(error.message);

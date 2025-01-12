@@ -1,11 +1,15 @@
 import { Elysia, t } from "elysia";
 import { JWT_NAME } from "../../infrastructure/constant/constant";
 import jwt from "@elysiajs/jwt";
-import { authServices, userServices } from "../../application/instance";
+import {
+  addressServices,
+  authServices,
+  userServices,
+} from "../../application/instance";
 import { verifyJwt } from "../../infrastructure/utils/jwtSign";
 import type { IJwtPayload } from "../../infrastructure/entity/interface";
 
-export const userRouter = new Elysia({ prefix: "/v1/user" })
+export const userRouter = new Elysia({ prefix: "/v1/users" })
   .use(
     jwt({
       name: JWT_NAME,
@@ -73,34 +77,29 @@ export const userRouter = new Elysia({ prefix: "/v1/user" })
       throw new Error("something wrong when accessing user route");
     }
   })
-  .post(
-    "/logout",
-    async ({ set, cookie: { access_token, refresh_token }, user }) => {
-      try {
-        access_token.remove();
-        refresh_token.remove();
+  .post("/logout/:id", async ({ set, params }) => {
+    try {
+      const logout = {
+        isOnline: false,
+        refresh_token: null,
+      };
+      await authServices.logout(params.id, logout);
 
-        const logout = {
-          isOnline: false,
-          refresh_token: null,
-        };
-
-        set.status = 204;
-        await authServices.logout(user.user_id, logout);
-      } catch (error) {
-        set.status = 500;
-        if (error instanceof Error) {
-          throw new Error(error.message);
-        }
-        throw new Error("something wrong when accessing user route");
+      set.status = 200;
+      return { message: "Logout successful" };
+    } catch (error) {
+      set.status = 500;
+      if (error instanceof Error) {
+        throw new Error(error.message);
       }
+      throw new Error("something wrong when accessing user route");
     }
-  )
+  })
   .patch(
     "/:id",
-    async ({ set, body, user }) => {
+    async ({ set, body, params }) => {
       try {
-        const updated_profile = await userServices.update(user.user_id, body);
+        const updated_profile = await userServices.update(params.id, body);
 
         if (!updated_profile) {
           set.status = 400;
@@ -118,12 +117,16 @@ export const userRouter = new Elysia({ prefix: "/v1/user" })
       }
     },
     {
-      body: t.Object({
-        name: t.String(),
-        email: t.String(),
-        password: t.String(),
-        phone_number: t.String(),
-      }),
+      body: t.Partial(
+        t.Object({
+          name: t.String(),
+          email: t.String(),
+          password: t.String(),
+          phone_number: t.String(),
+          is_verified: t.Boolean(),
+          status: t.Boolean(),
+        })
+      ),
     }
   )
   .delete("/:id", async ({ set, params }) => {

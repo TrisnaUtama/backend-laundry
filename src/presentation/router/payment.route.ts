@@ -108,4 +108,47 @@ export const paymentRouter = new Elysia({ prefix: "/v1/payments" })
         })
       ),
     }
+  )
+  .patch(
+    "user/:id",
+    async ({ params, set, body }) => {
+      try {
+        const updatedData: UpdatePayment = {
+          order_id: body?.order_id,
+          payment_method: body?.payment_method,
+        };
+
+        const orderData: UpdateOrder = {
+          delivery_address: body?.delivery_address,
+          delivery_date: body?.delivery_date
+            ? new Date(body.delivery_date)
+            : undefined,
+        };
+
+        const updated_payment = await paymentServices.userPaid(
+          params.id,
+          updatedData,
+          orderData
+        );
+
+        set.status = 201;
+        return updated_payment;
+      } catch (error) {
+        set.status = 500;
+        if (error instanceof Error) {
+          throw new Error(error.message);
+        }
+        throw new Error("error while accessing order routes");
+      }
+    },
+    {
+      body: t.Optional(
+        t.Object({
+          order_id: t.Optional(t.String()),
+          payment_method: t.Optional(t.Enum(Payment_Method)),
+          delivery_address: t.Optional(t.String()),
+          delivery_date: t.Optional(t.String()),
+        })
+      ),
+    }
   );

@@ -56,11 +56,11 @@ export type CreateAddress = Omit<
 >;
 export type CreateItemType = Omit<
   Item_Type,
-  "item_type_id" | "updated_at" | "created_at"
+  "item_type_id" | "updated_at" | "created_at" | "status"
 >;
 export type CreateServices = Omit<
   Service,
-  "service_id" | "updated_at" | "created_at"
+  "service_id" | "updated_at" | "created_at" | "status"
 >;
 export type CreateItem = Omit<Item, "item_id" | "updated_at" | "created_at">;
 export type CreateOrder = Omit<
@@ -71,10 +71,11 @@ export type CreateOrder = Omit<
   | "delivery_date"
   | "cancellation_reason"
   | "status"
+  | "delivery_address"
 >;
 export type CreateDetailOrder = Omit<
   Detail_Order,
-  "detail_order_id" | "updated_at" | "created_at" | "price" | "weight"
+  "detail_order_id" | "updated_at" | "created_at" | "price"
 >;
 export type CreatePayment = Omit<
   Payment,

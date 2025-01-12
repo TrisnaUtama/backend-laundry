@@ -37,8 +37,8 @@ container.bind<ServicesRepository>(TYPES.servicesRepo).to(ServicesRepository);
 container.bind<ItemRepository>(TYPES.itemRepo).to(ItemRepository);
 container.bind<OrderRepository>(TYPES.orderRepo).to(OrderRepository);
 container
-  .bind<DetailOrderRepository>(TYPES.detailOrderRepo)
-  .to(DetailOrderRepository);
+	.bind<DetailOrderRepository>(TYPES.detailOrderRepo)
+	.to(DetailOrderRepository);
 container.bind<PaymentRepository>(TYPES.paymentRepo).to(PaymentRepository);
 container.bind<RattingRepository>(TYPES.rattingRepo).to(RattingRepository);
 container.bind<Logger>(TYPES.logger).to(Logger);
@@ -62,14 +62,14 @@ export const authServices = container.get<AuthServices>(AuthServices);
 export const addressServices = container.get<AddressServices>(AddressServices);
 export const userServices = container.get<UserServices>(UserServices);
 export const employeeServices =
-  container.get<EmployeeServices>(EmployeeServices);
+	container.get<EmployeeServices>(EmployeeServices);
 export const itemTypeServices =
-  container.get<ItemTypeServices>(ItemTypeServices);
+	container.get<ItemTypeServices>(ItemTypeServices);
 export const services = container.get<ServiceServices>(ServiceServices);
 export const itemServices = container.get<ItemServices>(ItemServices);
 export const orderServices = container.get<OrderServices>(OrderServices);
 export const detailOrderServices =
-  container.get<DetailOrderServices>(DetailOrderServices);
+	container.get<DetailOrderServices>(DetailOrderServices);
 export const paymentServices = container.get<PaymentServices>(PaymentServices);
 export const rattingServices = container.get<RattingServices>(RattingServices);
 export const logger = container.get<Logger>(Logger);

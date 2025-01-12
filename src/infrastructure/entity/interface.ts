@@ -61,6 +61,7 @@ export interface IOTP {
   getOne: (id: string, code: string) => Promise<OTP | null>;
   create: (data: CreateOTP) => Promise<OTP>;
   update: (id: string, data: Partial<UpdateOTP>) => Promise<OTP>;
+  delete: (id: string) => Promise<void>;
 }
 
 export interface IRatting {
