@@ -3,7 +3,7 @@ import { prisma } from "../src/infrastructure/utils/prisma";
 
 async function main() {
   try {
-      const hashed_password = await Bun.password.hash("password", "bcrypt");
+      const hashed_password = await Bun.password.hash("@password12", "bcrypt");
     await prisma.user.create({
         data : {
             email : "admin@ex.com",
