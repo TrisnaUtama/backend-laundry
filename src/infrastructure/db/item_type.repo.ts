@@ -1,18 +1,36 @@
-import type { IItem_Type } from "../entity/interface";
-import type { CreateItemType, UpdateItemType } from "../entity/types";
+import type { IItem_Type, ILogger } from "../entity/interface";
+import {
+	TYPES,
+	type CreateItemType,
+	type UpdateItemType,
+} from "../entity/types";
 import { Prisma } from "@prisma/client";
 import { DBError } from "../entity/errors";
 import { prisma } from "../utils/prisma";
+import "reflect-metadata";
+import { injectable, inject } from "inversify";
 
+@injectable()
 export class ItemTypeRepository implements IItem_Type {
+	private logger: ILogger;
+
+	constructor(@inject(TYPES.logger) logger: ILogger) {
+		this.logger = logger;
+	}
 	async getAll() {
 		try {
-			const item_types = await prisma.item_Type.findMany();
+			const item_types = await prisma.item_Type.findMany({
+				where: {
+					status: true,
+				},
+			});
 			return item_types;
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+				this.logger.error(error.message);
 				throw new DBError(error.message);
 			}
+			this.logger.error(error as string);
 			throw new DBError("something wrong while accesing DB item type");
 		}
 	}
@@ -27,8 +45,10 @@ export class ItemTypeRepository implements IItem_Type {
 			return item_type;
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+				this.logger.error(error.message);
 				throw new DBError(error.message);
 			}
+			this.logger.error(error as string);
 			throw new DBError("something wrong while accesing DB item type");
 		}
 	}
@@ -41,8 +61,10 @@ export class ItemTypeRepository implements IItem_Type {
 			return new_item_type;
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+				this.logger.error(error.message);
 				throw new DBError(error.message);
 			}
+			this.logger.error(error as string);
 			throw new DBError("something wrong while accesing DB item type");
 		}
 	}
@@ -58,8 +80,10 @@ export class ItemTypeRepository implements IItem_Type {
 			return updated_item_type;
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+				this.logger.error(error.message);
 				throw new DBError(error.message);
 			}
+			this.logger.error(error as string);
 			throw new DBError("something wrong while accesing DB item type");
 		}
 	}
@@ -73,8 +97,10 @@ export class ItemTypeRepository implements IItem_Type {
 			});
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+				this.logger.error(error.message);
 				throw new DBError(error.message);
 			}
+			this.logger.error(error as string);
 			throw new DBError("something wrong while accesing DB item type");
 		}
 	}

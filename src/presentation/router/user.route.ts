@@ -1,11 +1,15 @@
 import { Elysia, t } from "elysia";
-import { JWT_NAME } from "../../constant/constant";
+import { JWT_NAME } from "../../infrastructure/constant/constant";
 import jwt from "@elysiajs/jwt";
-import { authServices, userServices } from "../../application/instance";
+import {
+	addressServices,
+	authServices,
+	userServices,
+} from "../../application/instance";
 import { verifyJwt } from "../../infrastructure/utils/jwtSign";
 import type { IJwtPayload } from "../../infrastructure/entity/interface";
 
-export const userRouter = new Elysia({ prefix: "/v1/user" })
+export const userRouter = new Elysia({ prefix: "/v1/users" })
 	.use(
 		jwt({
 			name: JWT_NAME,
@@ -36,34 +40,66 @@ export const userRouter = new Elysia({ prefix: "/v1/user" })
 			user,
 		};
 	})
-	.post(
-		"/logout",
-		async ({ set, cookie: { access_token, refresh_token }, user }) => {
-			try {
-				access_token.remove();
-				refresh_token.remove();
-
-				const logout = {
-					isOnline: false,
-					refresh_token: null,
-				};
-
-				set.status = 204;
-				await authServices.logout(user.user_id, logout);
-			} catch (error) {
-				set.status = 500;
-				if (error instanceof Error) {
-					throw new Error(error.message);
-				}
-				throw new Error("something wrong when accessing user route");
+	.get("/", async ({ set }) => {
+		try {
+			const users = await userServices.getAll();
+			if (!users) {
+				set.status = 400;
+				throw new Error("server cannot process your request");
 			}
-		},
-	)
+
+			set.status = 200;
+			return users;
+		} catch (error) {
+			set.status = 500;
+			if (error instanceof Error) {
+				throw new Error(error.message);
+			}
+			throw new Error("something wrong when accessing user route");
+		}
+	})
+	.get("/:id", async ({ set, params }) => {
+		try {
+			const user = await userServices.getOne(params.id);
+			if (!user) {
+				set.status = 400;
+				throw new Error("server cannot process your request");
+			}
+
+			set.status = 200;
+			return user;
+		} catch (error) {
+			set.status = 500;
+			set.status = 500;
+			if (error instanceof Error) {
+				throw new Error(error.message);
+			}
+			throw new Error("something wrong when accessing user route");
+		}
+	})
+	.post("/logout/:id", async ({ set, params }) => {
+		try {
+			const logout = {
+				isOnline: false,
+				refresh_token: null,
+			};
+			await authServices.logout(params.id, logout);
+
+			set.status = 200;
+			return { message: "Logout successful" };
+		} catch (error) {
+			set.status = 500;
+			if (error instanceof Error) {
+				throw new Error(error.message);
+			}
+			throw new Error("something wrong when accessing user route");
+		}
+	})
 	.patch(
 		"/:id",
-		async ({ set, body, user }) => {
+		async ({ set, body, params }) => {
 			try {
-				const updated_profile = await userServices.update(user.user_id, body);
+				const updated_profile = await userServices.update(params.id, body);
 
 				if (!updated_profile) {
 					set.status = 400;
@@ -81,11 +117,26 @@ export const userRouter = new Elysia({ prefix: "/v1/user" })
 			}
 		},
 		{
-			body: t.Object({
-				name: t.String(),
-				email: t.String(),
-				password: t.String(),
-				phone_number: t.String(),
-			}),
+			body: t.Partial(
+				t.Object({
+					name: t.String(),
+					email: t.String(),
+					password: t.String(),
+					phone_number: t.String(),
+					is_verified: t.Boolean(),
+					status: t.Boolean(),
+				}),
+			),
 		},
-	);
+	)
+	.delete("/:id", async ({ set, params }) => {
+		try {
+			await userServices.delete(params.id);
+		} catch (error) {
+			set.status = 500;
+			if (error instanceof Error) {
+				throw new Error(error.message);
+			}
+			throw new Error("something wrong when accessing user route");
+		}
+	});

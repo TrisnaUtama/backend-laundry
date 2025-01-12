@@ -1,8 +1,12 @@
 import jwt from "@elysiajs/jwt";
 import { Elysia, t } from "elysia";
 import type { IJwtPayload } from "../../infrastructure/entity/interface";
-import { authServices, employeeServices } from "../../application/instance";
-import { JWT_NAME } from "../../constant/constant";
+import {
+	addressServices,
+	authServices,
+	employeeServices,
+} from "../../application/instance";
+import { JWT_NAME } from "../../infrastructure/constant/constant";
 import { verifyJwt } from "../../infrastructure/utils/jwtSign";
 import { Role } from "@prisma/client";
 
@@ -18,6 +22,7 @@ export const employeeRouter = new Elysia({ prefix: "/v1/employees" })
 			set.status = 401;
 			throw new Error("Unauthorized");
 		}
+
 		const jwtPayload: IJwtPayload = verifyJwt(access_token.value.toString());
 
 		if (!jwtPayload) {
@@ -61,9 +66,9 @@ export const employeeRouter = new Elysia({ prefix: "/v1/employees" })
 			throw new Error("something wrong while accesing employee routes");
 		}
 	})
-	.get("/:id", async ({ user, set }) => {
+	.get("/:id", async ({ params, set }) => {
 		try {
-			const employee = await employeeServices.getOne(user.user_id);
+			const employee = await employeeServices.getOne(params.id);
 			if (!employee) {
 				set.status = 400;
 				throw new Error("server cannot process your request !");
@@ -83,11 +88,25 @@ export const employeeRouter = new Elysia({ prefix: "/v1/employees" })
 		"/",
 		async ({ body, set }) => {
 			try {
-				const new_employee = await employeeServices.registerEmployee(body);
+				const employee_data = {
+					name: body.name,
+					email: body.email,
+					password: body.password,
+					phone_number: body.phone_number,
+					role: body.role,
+				};
+				const new_employee =
+					await employeeServices.registerEmployee(employee_data);
 				if (!new_employee) {
 					set.status = 400;
 					throw new Error("server cannot process your request !");
 				}
+				const address_data = {
+					address: body.address,
+					user_id: new_employee.user_id,
+					is_default: true,
+				};
+				await addressServices.create(address_data);
 
 				set.status = 200;
 				return new_employee;
@@ -105,18 +124,35 @@ export const employeeRouter = new Elysia({ prefix: "/v1/employees" })
 				email: t.String(),
 				password: t.String(),
 				phone_number: t.String(),
+				address: t.String(),
 				role: t.Enum(Role),
 			}),
 		},
 	)
 	.patch(
 		"/:id",
-		async ({ body, set, user }) => {
+		async ({ body, set, params }) => {
 			try {
+				const employee_data = {
+					name: body.name,
+					email: body.email,
+					password: body.password,
+					phone_number: body.phone_number,
+					role: body.role,
+				};
 				const updated_employee = await employeeServices.update(
-					user.user_id,
-					body,
+					params.id,
+					employee_data,
 				);
+
+				const address_data = {
+					address: body.address,
+					user_id: updated_employee.user_id,
+				};
+
+				if (!body.id_address) return null;
+
+				await addressServices.update(body.id_address, address_data);
 
 				if (!updated_employee) {
 					set.status = 400;
@@ -140,7 +176,9 @@ export const employeeRouter = new Elysia({ prefix: "/v1/employees" })
 					email: t.String(),
 					password: t.String(),
 					phone_number: t.String(),
+					address: t.String(),
 					role: t.Enum(Role),
+					id_address: t.String(),
 				}),
 			),
 		},

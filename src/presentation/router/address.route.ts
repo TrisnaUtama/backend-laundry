@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
 import { addressServices } from "../../application/instance";
-import { JWT_NAME } from "../../constant/constant";
+import { JWT_NAME } from "../../infrastructure/constant/constant";
 import jwt from "@elysiajs/jwt";
 import { authServices } from "../../application/instance";
 import { verifyJwt } from "../../infrastructure/utils/jwtSign";
@@ -36,9 +36,9 @@ export const addressRouter = new Elysia({ prefix: "/v1/address" })
 			user,
 		};
 	})
-	.get("/user/:id", async ({ set, user }) => {
+	.get("/user/:id", async ({ set, params }) => {
 		try {
-			const address = await addressServices.getAll(user.user_id);
+			const address = await addressServices.getAll(params.id);
 			set.status = 200;
 			return address;
 		} catch (error) {
@@ -49,9 +49,9 @@ export const addressRouter = new Elysia({ prefix: "/v1/address" })
 			throw new Error("something wrong when accessing route address");
 		}
 	})
-	.get("/:id", async ({ set, user }) => {
+	.get("/:id", async ({ set, params }) => {
 		try {
-			const address = await addressServices.getOne(user.user_id);
+			const address = await addressServices.getOne(params.id);
 			set.status = 200;
 			return address;
 		} catch (error) {

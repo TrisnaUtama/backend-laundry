@@ -6,7 +6,7 @@ import type {
 } from "../../infrastructure/entity/types";
 import { Elysia, t } from "elysia";
 import { authServices, services } from "../../application/instance";
-import { JWT_NAME } from "../../constant/constant";
+import { JWT_NAME } from "../../infrastructure/constant/constant";
 import { verifyJwt } from "../../infrastructure/utils/jwtSign";
 import { Decimal } from "@prisma/client/runtime/library";
 
@@ -29,7 +29,7 @@ export const serviceRouter = new Elysia({ prefix: "/v1/services" })
 			throw new Error("Forbidden");
 		}
 
-		if (jwtPayload.role === "User" || jwtPayload.role === "Staff") {
+		if (jwtPayload.role === "Staff") {
 			set.status = 403;
 			throw new Error("Forbidden");
 		}
@@ -128,6 +128,7 @@ export const serviceRouter = new Elysia({ prefix: "/v1/services" })
 					item_type_id: body.item_type_id,
 					description: body.description,
 					name: body.name,
+					status: body.status,
 					estimated_hours: body.estimated_hours,
 					price: body.price
 						? new Decimal(Number.parseFloat(body.price.toString()))
@@ -160,6 +161,7 @@ export const serviceRouter = new Elysia({ prefix: "/v1/services" })
 					description: t.String(),
 					price: t.Number(),
 					estimated_hours: t.Number(),
+					status: t.Boolean(),
 				}),
 			),
 		},

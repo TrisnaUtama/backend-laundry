@@ -4,20 +4,24 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"dev": "bun run --watch src/index.ts",
+		"run": "bun run src/index.ts",
 		"lint:format": "bunx biome format src --fix",
 		"lint:check": "bunx biome lint src",
 		"prepare": "husky"
 	},
 	"dependencies": {
+		"@elysiajs/cors": "^1.2.0",
 		"@elysiajs/jwt": "^1.2.0",
+		"@elysiajs/swagger": "^1.2.0",
 		"@prisma/client": "^6.1.0",
 		"elysia": "latest",
 		"install": "^0.13.0",
 		"inversify": "^6.2.1",
+		"jsonwebtoken": "^9.0.2",
 		"nodemailer": "^6.9.16",
 		"prisma": "^6.1.0",
-		"jsonwebtoken": "^9.0.2" ,
-		"reflect-metadata": "^0.2.2"
+		"reflect-metadata": "^0.2.2",
+		"winston": "^3.17.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",

@@ -1,10 +1,18 @@
-import type { IAddress } from "../entity/interface";
+import type { IAddress, ILogger } from "../entity/interface";
 import { prisma } from "../utils/prisma";
-import type { CreateAddress, UpdateAddress } from "../entity/types";
+import { TYPES, type CreateAddress, type UpdateAddress } from "../entity/types";
 import { Prisma } from "@prisma/client";
 import { DBError } from "../entity/errors";
+import "reflect-metadata";
+import { injectable, inject } from "inversify";
 
+@injectable()
 export class AddressRepository implements IAddress {
+	private logger: ILogger;
+
+	constructor(@inject(TYPES.logger) logger: ILogger) {
+		this.logger = logger;
+	}
 	async getAll(user_id: string) {
 		try {
 			const addresses = await prisma.address.findMany({
@@ -16,8 +24,10 @@ export class AddressRepository implements IAddress {
 			return addresses;
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+				this.logger.error(error.message);
 				throw new DBError(error.message);
 			}
+			this.logger.error(error as string);
 			throw new DBError("something went wrong while accesing DB address");
 		}
 	}
@@ -26,16 +36,19 @@ export class AddressRepository implements IAddress {
 		try {
 			const address = await prisma.address.findFirst({
 				where: {
-					OR: [{ user_address_id: idOrAddress }, { user_id: idOrAddress }],
+					is_default: true,
+					OR: [{ user_id: idOrAddress }, { user_address_id: idOrAddress }],
 				},
 			});
 			return address;
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+				this.logger.error(error.message);
 				throw new DBError(error.message);
 			}
+			this.logger.error(error as string);
+			throw new DBError("something went wrong while accesing DB address");
 		}
-		throw new DBError("something went wrong while accesing DB address");
 	}
 
 	async create(data: CreateAddress) {
@@ -47,10 +60,12 @@ export class AddressRepository implements IAddress {
 			return new_address;
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+				this.logger.error(error.message);
 				throw new DBError(error.message);
 			}
+			this.logger.error(error as string);
+			throw new DBError("something went wrong while accesing DB address");
 		}
-		throw new DBError("something went wrong while accesing DB address");
 	}
 
 	async update(id: string, data: UpdateAddress) {
@@ -67,10 +82,12 @@ export class AddressRepository implements IAddress {
 			return updated_address;
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+				this.logger.error(error.message);
 				throw new DBError(error.message);
 			}
+			this.logger.error(error as string);
+			throw new DBError("something went wrong while accesing DB address");
 		}
-		throw new DBError("something went wrong while accesing DB address");
 	}
 
 	async delete(id: string) {
@@ -82,9 +99,11 @@ export class AddressRepository implements IAddress {
 			});
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+				this.logger.error(error.message);
 				throw new DBError(error.message);
 			}
+			this.logger.error(error as string);
+			throw new DBError("something went wrong while accesing DB address");
 		}
-		throw new DBError("something went wrong while accesing DB address");
 	}
 }

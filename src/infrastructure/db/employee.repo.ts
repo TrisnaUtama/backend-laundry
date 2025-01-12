@@ -1,10 +1,22 @@
 import { DBError } from "../entity/errors";
-import type { IEmployee, IUser } from "../entity/interface";
-import type { CreateEmployee, CreateUser, UpdateUser } from "../entity/types";
+import type { IEmployee, ILogger } from "../entity/interface";
+import {
+	TYPES,
+	type CreateEmployee,
+	type CreateUser,
+	type UpdateUser,
+} from "../entity/types";
 import { prisma } from "../utils/prisma";
 import { Prisma, Role } from "@prisma/client";
-
+import "reflect-metadata";
+import { injectable, inject } from "inversify";
+@injectable()
 export class EmployeeRepository implements IEmployee {
+	private logger: ILogger;
+
+	constructor(@inject(TYPES.logger) logger: ILogger) {
+		this.logger = logger;
+	}
 	async getAll() {
 		try {
 			const employees = await prisma.user.findMany({
@@ -16,8 +28,10 @@ export class EmployeeRepository implements IEmployee {
 			return employees;
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+				this.logger.error(error.message);
 				throw new DBError(error.message);
 			}
+			this.logger.error(error as string);
 			throw new DBError("something wrong while accessing DB employee");
 		}
 	}
@@ -35,8 +49,10 @@ export class EmployeeRepository implements IEmployee {
 			return employee;
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+				this.logger.error(error.message);
 				throw new DBError(error.message);
 			}
+			this.logger.error(error as string);
 			throw new DBError("something wrong while accessing DB employee");
 		}
 	}
@@ -50,8 +66,10 @@ export class EmployeeRepository implements IEmployee {
 			return new_employee;
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+				this.logger.error(error.message);
 				throw new DBError(error.message);
 			}
+			this.logger.error(error as string);
 			throw new DBError("something wrong while accessing DB employee");
 		}
 	}
@@ -68,8 +86,10 @@ export class EmployeeRepository implements IEmployee {
 			return updated_employee;
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+				this.logger.error(error.message);
 				throw new DBError(error.message);
 			}
+			this.logger.error(error as string);
 			throw new DBError("something wrong while accessing DB employee");
 		}
 	}
@@ -83,8 +103,10 @@ export class EmployeeRepository implements IEmployee {
 			});
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
+				this.logger.error(error.message);
 				throw new DBError(error.message);
 			}
+			this.logger.error(error as string);
 			throw new DBError("something wrong while accessing DB employee");
 		}
 	}
