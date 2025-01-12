@@ -86,9 +86,9 @@ export class OTPRepository implements IOTP {
 		try {
 			await prisma.oTP.delete({
 				where: {
-					otp_id : id
-				}
-			})
+					otp_id: id,
+				},
+			});
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
 				this.logger.error(error.message);

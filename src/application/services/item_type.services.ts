@@ -92,8 +92,8 @@ export class ItemTypeServices {
 	async delete(id: string) {
 		try {
 			const data = {
-				status: false
-			}
+				status: false,
+			};
 			await this.itemTypeRepo.update(id, data);
 		} catch (error) {
 			if (error instanceof Error) {

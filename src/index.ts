@@ -15,36 +15,36 @@ import cors from "@elysiajs/cors";
 
 const app = new Elysia();
 app
-  .use(
-    cors({
-      origin: "http://localhost:3000",
-      methods: ["GET", "POST", "PATCH", "DELETE"],
-      allowedHeaders: ["Content-Type", "Authorization"],
-      credentials: true,
-    })
-  )
-  .use(
-    swagger({
-      path: "/docs",
-    })
-  )
-  .group("/api", (app) =>
-    app
-      .use(authRouter)
-      .use(userRouter)
-      .use(employeeRouter)
-      .use(addressRouter)
-      .use(itemTypeRouter)
-      .use(itemRouter)
-      .use(serviceRouter)
-      .use(orderRouter)
-      .use(detailOrderRouter)
-      .use(paymentRouter)
-      .use(rattingRouter)
-  )
+	.use(
+		cors({
+			origin: "http://localhost:3000",
+			methods: ["GET", "POST", "PATCH", "DELETE"],
+			allowedHeaders: ["Content-Type", "Authorization"],
+			credentials: true,
+		}),
+	)
+	.use(
+		swagger({
+			path: "/docs",
+		}),
+	)
+	.group("/api", (app) =>
+		app
+			.use(authRouter)
+			.use(userRouter)
+			.use(employeeRouter)
+			.use(addressRouter)
+			.use(itemTypeRouter)
+			.use(itemRouter)
+			.use(serviceRouter)
+			.use(orderRouter)
+			.use(detailOrderRouter)
+			.use(paymentRouter)
+			.use(rattingRouter),
+	)
 
-  .listen(8000);
+	.listen(8000);
 
 console.log(
-  `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
+	`🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`,
 );
