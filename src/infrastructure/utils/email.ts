@@ -2,12 +2,13 @@ import nodemailer, { type Transporter, type SendMailOptions } from "nodemailer";
 
 export async function notifyEmail(code: number, receiver: string) {
 	const pass = `${process.env.SMPT_PASSWORD}`;
+	const user = `${process.env.USER}`;
 	const transporter: Transporter = nodemailer.createTransport({
 		host: "smtp.gmail.com",
 		port: 465,
 		secure: true,
 		auth: {
-			user: "putu.trisna12@gmail.com",
+			user: user,
 			pass: pass,
 		},
 	});
